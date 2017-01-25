@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:objectstore="http://www.mulesoft.org/schema/mule/objectstore"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/objectstore http://www.mulesoft.org/schema/mule/objectstore/current/mule-objectstore.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+	<context:property-placeholder location="common.properties, mule.dev.properties"/>
+    
+    <http:request-config name="HTTP_Request_Configuration_Sys_SFDC"  host="${system.api.user.sfdc.domain}" port="${system.api.user.sfdc.http.port}" doc:name="HTTP Request Configuration" basePath="${system.api.user.sfdc.basePath}" protocol="HTTPS"/>
+    <http:request-config name="HTTP_Request_Configuration_Sys_Nets"  host="${system.api.employee.nets.domain}" port="${system.api.employee.nets.http.port}" doc:name="HTTP Request Configuration" basePath="${system.api.employee.nets.basePath}" protocol="HTTPS"/>
+    <http:request-config name="HTTP_Request_Configuration_Sys_Wday"  host="${system.api.employee.wday.domain}" port="${system.api.employee.wday.http.port}" doc:name="HTTP Request Configuration" basePath="${system.api.employee.wday.basePath}" protocol="HTTPS"/>
+    
+    <http:request-config name="HTTP_Request_Configuration_Employee_Mapping" host="${process.api.employee.lookup.domain}" port="${process.api.employee.lookup.http.port}" basePath="${process.api.employee.lookup.basePath}" protocol="HTTPS" doc:name="HTTP Request Configuration"/>
+    
+    <objectstore:config name="ObjectStore" doc:name="ObjectStore: Connector" />
+    
+    <http:listener-config name="process-api-httpListenerConfig" host="0.0.0.0" port="${http.port}" doc:name="HTTP Listener Configuration"/>
+    
+
+</mule>
