@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:objectstore="http://www.mulesoft.org/schema/mule/objectstore"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/objectstore http://www.mulesoft.org/schema/mule/objectstore/current/mule-objectstore.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+    
+	<flow name="postEmployeeProcessFlow">
+        <set-variable variableName="uniqueID" value="#[java.util.UUID.randomUUID()]" doc:name="Set uniqueID variable" />
+        <objectstore:store config-ref="ObjectStore" key="#[flowVars.uniqueID]" value-ref="#['']" doc:name="Store uniqueID in ObjectStore" />
+        <object-to-byte-array-transformer doc:name="Object to Byte Array"/>
+        <async doc:name="Async">
+            <scatter-gather doc:name="Scatter-Gather">
+                <http:request config-ref="HTTP_Request_Configuration_Sys_SFDC" path="/employees" method="POST" doc:name="POST User SFDC"/>
+                <http:request config-ref="HTTP_Request_Configuration_Sys_Nets" path="/employees" method="POST" doc:name="POST Employee Netsuite"/>
+                <http:request config-ref="HTTP_Request_Configuration_Sys_Wday" path="/employees" method="POST" doc:name="POST Employee Workday"/>
+            </scatter-gather>
+            <dw:transform-message doc:name="Merge Results">
+                <dw:set-payload resource="classpath:dwScripts/mergeResults.dwl"/>
+            </dw:transform-message>
+            <http:request config-ref="HTTP_Request_Configuration_Employee_Mapping" path="/employees" method="POST" doc:name="POST Employee Mapping"/>
+            <dw:transform-message doc:name="Build Response">
+                <dw:set-payload resource="classpath:dwScripts/buildEmployeeMapperResponse.dwl"/>
+            </dw:transform-message>
+            <objectstore:store config-ref="ObjectStore" key="#[flowVars.uniqueID]" value-ref="#[payload]" overwrite="true" doc:name="Store result into ObjectStore" />
+        </async>
+        <set-payload value="#['Accepted']" doc:name="Set Payload"/>
+        <set-property propertyName="http.status" value="202" doc:name="Set HTTP status Property" />
+        <set-property propertyName="Location" value="http://#[message.inboundProperties.host]${api.basePath}/queue/#[flowVars.uniqueID]" doc:name="Set Location Property"/>
+    </flow>
+    
+    <flow name="getQueueFlow">
+        <set-variable variableName="id" value="#[message.inboundProperties.'http.uri.params'.id]" doc:name="Set id variable" />
+        <objectstore:contains config-ref="ObjectStore" key="#[flowVars.id]" doc:name="Get if ObjectStore contains id" />
+        <choice doc:name="Does the id exists?">
+            <when expression="payload">
+                <objectstore:retrieve config-ref="ObjectStore" key="#[flowVars.id]" doc:name="Retrieve value from ObjectStore" />
+                <choice doc:name="Process has finished?">
+                    <when expression="payload != empty">
+                        <set-property propertyName="http.status" value="303" doc:name="Set HTTP Status Property"/>
+                        <set-property propertyName="Location" value="http://#[message.inboundProperties.host]${api.basePath}/employees/#[payload]?processId=#[flowVars.id]" doc:name="Set Location Property" />
+                    </when>
+                    <otherwise>
+                        <dw:transform-message doc:name="Set 'In progress' message">
+                            <dw:set-payload resource="classpath:dwScripts/buildInProgressResponse.dwl"/>
+                        </dw:transform-message>
+                    </otherwise>
+                </choice>
+            </when>
+            <otherwise>
+                <set-property propertyName="http.status" value="404" doc:name="Set HTTP Status Property"/>
+                <dw:transform-message doc:name="Set 'Resource not found' message">
+                    <dw:set-payload resource="classpath:dwScripts/buildResourceNotFoundResponse.dwl"/>
+                </dw:transform-message>
+            </otherwise>
+        </choice>
+    </flow>
+        
+    <flow name="getEmployeeByIdFlow">
+        <set-variable variableName="id" value="#[message.inboundProperties.'http.uri.params'.id]" doc:name="Set id variable"/>
+        <set-variable variableName="processId" value="#[message.inboundProperties.'http.query.params'.processId]" doc:name="Set process id variable"/>
+        <http:request config-ref="HTTP_Request_Configuration_Employee_Mapping" path="/employees/{id}" method="GET" doc:name="GET Employee Mapping">
+            <http:request-builder>
+                <http:uri-param paramName="id" value="#[flowVars.id]"/>
+            </http:request-builder>
+        </http:request>
+        <dw:transform-message doc:name="Prepare response in JSON">
+            <dw:set-payload resource="classpath:dwScripts/buildProcessStatusResponse.dwl"/>
+        </dw:transform-message>
+    </flow>
+</mule>
