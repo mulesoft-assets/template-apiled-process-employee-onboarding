@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:objectstore="http://www.mulesoft.org/schema/mule/objectstore"
+<mule xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:objectstore="http://www.mulesoft.org/schema/mule/objectstore"
 	xmlns:http="http://www.mulesoft.org/schema/mule/http"
 	xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw"
 	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
@@ -14,14 +14,51 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
 http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
     
 	<flow name="postEmployeeProcessFlow">
+
         <set-variable variableName="uniqueID" value="#[java.util.UUID.randomUUID()]" doc:name="Set uniqueID variable" />
         <objectstore:store config-ref="ObjectStore" key="#[flowVars.uniqueID]" value-ref="#['']" doc:name="Store uniqueID in ObjectStore" />
         <object-to-byte-array-transformer doc:name="Object to Byte Array"/>
         <async doc:name="Async">
             <scatter-gather doc:name="Scatter-Gather">
-                <http:request config-ref="HTTP_Request_Configuration_Sys_SFDC" path="/employees" method="POST" doc:name="POST User SFDC"/>
-                <http:request config-ref="HTTP_Request_Configuration_Sys_Nets" path="/employees" method="POST" doc:name="POST Employee Netsuite"/>
-                <http:request config-ref="HTTP_Request_Configuration_Sys_Wday" path="/employees" method="POST" doc:name="POST Employee Workday"/>
+                <processor-chain>
+                    <logger message="Going to send a message to SFDC" level="INFO" doc:name="Logger"/>
+                    <dw:transform-message doc:name="Transform Message">
+                        <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	"firstName" : payload.firstName,
+	"lastName" : payload.lastName,
+	"username" : payload.email,
+	"alias": payload.lastName,
+	"street" : payload.addressLine,
+	"city" : payload.city,
+	"postalCode" : payload.postalCode,
+	"country" : payload.country,
+	"phone" : payload.phone,
+	"email": payload.email,
+	"localeSidKey" : payload.localeSidKey,
+	"languageLocaleKey" : payload.languageLocaleKey,
+	"emailEncodingKey" : payload.emailEncodingKey,
+	"timeZoneSidKey" : payload.timeZoneSidKey,
+	"profileId" : p('system.api.user.sfdc.profileId')
+}]]></dw:set-payload>
+                    </dw:transform-message>
+
+                    <http:request config-ref="HTTP_Request_Configuration_Sys_SFDC" path="/users" method="POST" doc:name="Post Employee Salesforce"/>
+
+                </processor-chain>
+                <processor-chain>
+                    <logger message="Going to send a message to Nets" level="INFO" doc:name="Logger"/>
+                    <http:request config-ref="HTTP_Request_Configuration_Sys_Nets" path="/employees" method="POST" doc:name="POST Employee Netsuite"/>
+                </processor-chain>
+                <processor-chain>
+                    <logger message="Going to send a message to Wday" level="INFO" doc:name="Logger"/>
+                    <http:request config-ref="HTTP_Request_Configuration_Sys_Wday" path="/employees" method="POST" doc:name="POST Employee Workday"/>
+                </processor-chain>
+
+
+
             </scatter-gather>
             <dw:transform-message doc:name="Merge Results">
                 <dw:set-payload resource="classpath:dwScripts/mergeResults.dwl"/>
@@ -36,6 +73,7 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
         <set-property propertyName="http.status" value="202" doc:name="Set HTTP status Property" />
         <set-property propertyName="Location" value="http://#[message.inboundProperties.host]${api.basePath}/queue/#[flowVars.uniqueID]" doc:name="Set Location Property"/>
     </flow>
+
     
     <flow name="getQueueFlow">
         <set-variable variableName="id" value="#[message.inboundProperties.'http.uri.params'.id]" doc:name="Set id variable" />

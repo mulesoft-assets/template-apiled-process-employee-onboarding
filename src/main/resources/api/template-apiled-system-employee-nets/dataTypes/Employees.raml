@@ -1,6 +1,6 @@
 #%RAML 1.0 DataType
 
-#This file is located at dataTypes/Employee.raml
+#This file is located at dataTypes/Employees.raml
 
 type: object
 properties:
@@ -36,32 +36,4 @@ properties:
   currency:
     type: string
     enum: [EUR, USD]
-    required: false    
-  localeSidKey:
-    type: string
-    enum: [en_IE_EURO, en_US, en_GB]
-  languageLocaleKey:
-    type: string
-    enum: [en_US, en_GB]
-  timeZoneSidKey: string
-  emailEncodingKey: string
-example:
-  firstName: "Logan"
-  lastName: "McNeil"
-  addressLine: "3939 The Embarcadero"
-  city: "San Francisco"
-  postalCode: "94111"
-  country: "USA"
-  region: "USA-CA"
-  birthDate: "1972-05-25-07:00"
-  phone: "444-8262"
-  email: "kit.wongvite@mulesoft.com"
-  positionTitle: "Chief Human Resources Officer"
-  weeklyHours: 40
-  basePay: 4000
-  currency: "USD"
-  localeSidKey: "en_IE_EURO"
-  languageLocaleKey: "en_US"
-  timeZoneSidKey: "America/New_York"
-  emailEncodingKey: "ISO-8859-1"
-  
+    required: false

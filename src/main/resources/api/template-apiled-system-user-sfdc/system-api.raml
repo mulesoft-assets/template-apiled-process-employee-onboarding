@@ -1,0 +1,136 @@
+#%RAML 1.0
+title: System API
+version: v2.0
+  
+types:
+  user: !include dataTypes/User.raml
+  errorResponse: !include dataTypes/ErrorResponse.raml
+  successResponse: !include dataTypes/SuccessResponse.raml
+
+traits:
+  userSearch: !include traits/trait-collection.raml
+
+/users:
+  displayName: Users
+  description: |
+    Working with users:
+    * Retrieving all users
+    * Creating users
+  get:
+    description: |
+      Retrieve all the Users.
+    is: [ userSearch ]
+    queryParameters:
+      username:
+        displayName: The username
+        minLength: 0
+        maxLength: 255
+    responses:
+      200:
+        body:
+          application/json:
+            type: user[]
+            example: !include examples/get_users_example.json
+  post:
+    description: |
+      Create a new User
+    body:
+      application/json:
+        type: user
+        example: !include examples/post_user_example.json
+    responses:
+      201:
+        description: Created
+        body:
+          application/json:
+            example: |
+              {
+                "id": "0012000001BaRgPAAV"
+                "username": "username@example.com"
+              }
+      400:
+          body:
+            application/json:
+              type: errorResponse
+              example: |
+                {
+                  "message": "Failed to create new User"
+                }
+  /{id}:
+    displayName: User ID
+    description: |
+      Working with users:
+      * Retrieving specific user
+      * Updating specific user
+      * Deleting specific user
+    uriParameters:
+      id:
+        type: string
+        example: 0012000001BaRgPAAV
+        description: Represents the user unique id in form of UUID
+    get:
+      description: Get User by ID
+      responses:
+        200:
+          body:
+            application/json:
+              type: user
+              example: !include examples/get_userById_example.json
+        404:
+          body:
+            application/json:
+              type: errorResponse
+              example: |
+                {
+                  "message": "Resource not found"
+                }
+    put:
+      description: Update User specified by ID
+      body:
+        application/json:
+          type: user
+          example: !include examples/put_user_example.json
+      responses:
+        200:
+          body:
+            application/json:
+              type: successResponse
+              example: |
+                {
+                  "status": "OK"
+                }
+        404:
+          body:
+            application/json:
+              type: errorResponse
+              example: |
+                {
+                  "message": "Resource not found"
+                }
+    delete:
+      description: Delete User specified by ID
+      responses:
+        200:
+          body:
+            application/json:
+              type: successResponse
+              example: |
+                {
+                  "status": "OK"
+                }
+        404:
+          body:
+            application/json:
+              type: errorResponse
+              example: |
+                {
+                  "message": "Resource not found"
+                }
+        405:
+          body:
+            application/json:
+              type: errorResponse
+              example: |
+                {
+                  "message": "User cannot be deleted"
+                }

@@ -21,11 +21,11 @@ http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee
     </flow>
     
     <flow name="post:/employees:process-api-config">
-        <flow-ref name="postEmployeeProcessFlow" doc:name="postEmployeeImplementationFlow"/>
+        <flow-ref name="postEmployeeProcessFlow" doc:name="postEmployeeImplementationProcessFlow"/>
     </flow>
     
     <flow name="get:/employees/{id}:process-api-config">
-        <flow-ref name="getEmployeeByIdFlow" doc:name="getEmployeeProcessStatusFlow"/>
+        <flow-ref name="getEmployeeByIdFlow" doc:name="getEmployeeByIdImplementationFlow"/>
     </flow>
     
    	<flow name="get:/queue/{id}:process-api-config">

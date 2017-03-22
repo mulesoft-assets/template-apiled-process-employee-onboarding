@@ -98,9 +98,14 @@ In order to use this Mule Anypoint Template you need to configure properties (Cr
 ### Application configuration
 **Common configuration**
 
-+ http.port `9090`
++ https.port `8082`
 
 **APIs configuration**
+
++ keystore.location `keystore.jks` 
++ keystore.password `pass123!`
++ key.password `pass123!`
++ key.alias `1`
 
 + api.basePath `/api`
 
@@ -115,6 +120,7 @@ In order to use this Mule Anypoint Template you need to configure properties (Cr
 + system.api.user.sfdc.domain `your-destination-sfdc-system-api.cloudhub.io`
 + system.api.user.sfdc.http.port `9093`
 + system.api.user.sfdc.basePath `/api3`
++ system.api.user.sfdc.profileId `1abda9823bbaaaaaa`
 
 + process.api.employee.lookup.domain `your-lookup-process-api.cloudhub.io`
 + process.api.employee.lookup.http.port `9094`

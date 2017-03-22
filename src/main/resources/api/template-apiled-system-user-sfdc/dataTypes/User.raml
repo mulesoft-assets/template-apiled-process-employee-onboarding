@@ -1,0 +1,28 @@
+#%RAML 1.0 DataType
+
+#This file is located at dataTypes/user.raml
+
+type: object
+properties: 
+  id?: string | integer
+  nativeId?: string
+  alias?: string
+  username?: string
+  firstName?: string
+  lastName?: string
+  email?: string
+  emailEncodingKey?: string
+  languageLocaleKey?: string
+  localeSidKey?: string
+  timeZoneSidKey?: string
+  title?: string
+  profileId?: string
+  createdDate:
+    type: datetime
+    example: 2016-03-24T14:00:00.000Z
+    required: false
+  lastModifiedDate:
+    type: datetime
+    example: 2016-03-24T14:00:00.000Z
+    required: false
+  lastModifiedById?: string |integer
