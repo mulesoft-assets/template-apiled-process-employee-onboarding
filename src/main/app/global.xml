@@ -25,7 +25,9 @@ http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/
         <http:raml-api-configuration location="api/template-apiled-system-employee-wday/system-api.raml"/>
     </http:request-config>
     
-    <http:request-config name="HTTP_Request_Configuration_Employee_Mapping" host="${process.api.employee.lookup.domain}" port="${process.api.employee.lookup.http.port}" basePath="${process.api.employee.lookup.basePath}"  doc:name="HTTP Request Configuration"/>
+    <http:request-config name="HTTP_Request_Configuration_Employee_Mapping" host="${process.api.employee.lookup.domain}" port="${process.api.employee.lookup.http.port}" basePath="${process.api.employee.lookup.basePath}"  doc:name="HTTP Request Configuration" >
+    	<http:raml-api-configuration location="api/template-apiled-process-employee-lookup/api.raml"/>
+    </http:request-config>
     
     <objectstore:config name="ObjectStore" doc:name="ObjectStore: Connector" />
     

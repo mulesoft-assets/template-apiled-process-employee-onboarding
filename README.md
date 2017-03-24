@@ -28,7 +28,7 @@ This Template incorporate the Employee System APIs, for storing Employees in mul
 Below are the endpoints that are implemented.
 
 ### POST /employees
-This endpoint will start generation of the Employee onboarding process. The generation is done asynchronously using queue for requests. The process aggregates the ids of each system API response using a lookup process API. Responses are get from three source instances(Workday, Netsuite and SFDC) using API Led Connectivity System APIs.
+This endpoint will start generation of the Employee onboarding process. The generation is done asynchronously using queue for requests. The process aggregates the ids of each system API response using a lookup process API. The lookup process API RAML you can find in main/resources/api/ directory. The lookup process API implementation of that RAML is client specific and should use persistent storage to preserve a mapping data. Responses are get from three source instances(Workday, Netsuite and SFDC) using API Led Connectivity System APIs.
 
 ### GET /employees/{id}
 This endpoint returns Employee ids aggregation identified by unique ID. If the process does not exist or haven't been finished yet, the request ends up with "Resource not found" message.
