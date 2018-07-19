@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:retail-orders-system-api="http://www.mulesoft.org/schema/mule/retail-orders-system-api" xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/retail-orders-system-api http://www.mulesoft.org/schema/mule/retail-orders-system-api/current/mule-retail-orders-system-api.xsd">
+	<os:object-store name="Object_store" doc:name="Object store" doc:id="7ccc4b28-f663-4380-bf1e-2bcf29e78531" />
+	<flow name="postEmployeeProcessFlow" doc:id="38697d6d-5bc9-4d65-8646-8bae278df246" >
+		<logger level="INFO" doc:name="Logger" doc:id="9e662459-a93c-4569-850a-3565df7eca27" message="POST employee"/>
+		<set-variable value="#[uuid()]" doc:name="Set Variable" doc:id="f1267286-d9d6-4865-b75a-0dda166f6f16" variableName="uniqueID"/>
+		<logger level="INFO" doc:name="Logger" doc:id="f72cc24e-45dc-4307-887a-3057486ddb58" message="uniqueID=#[vars.uniqueID]"/>
+		<os:store doc:name="Store vars.uniqueID" doc:id="f7f0d3f4-ad96-4429-9600-4c28afd14f3f" key="#[vars.uniqueID]" objectStore="Object_store">
+			<os:value ><![CDATA[#['']]]></os:value>
+		</os:store>
+		<async doc:name="Async" doc:id="2d133d9e-b752-4269-b145-ad85aaf02855" >
+			<scatter-gather doc:name="Scatter-Gather" doc:id="cb771e58-ae1d-4593-b709-6d2ec1a4cbec" >
+				<route >
+					<logger level="INFO" doc:name="Log SFDC branch" doc:id="6e8ee7e4-1dba-42e4-a6e5-b08c0d076333" message="SFDC employee process"/>
+					<ee:transform doc:name="Transform Message" doc:id="c2a7a760-81d4-4065-ae2a-64dc05c50edc" >
+						<ee:message >
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"firstName" : payload.firstName,
+	"lastName" : payload.lastName,
+	"username" : payload.email,
+	"alias": payload.lastName,
+	"street" : payload.addressLine,
+	"city" : payload.city,
+	"postalCode" : payload.postalCode,
+	"country" : payload.country,
+	"phone" : payload.phone,
+	"email": payload.email,
+	"localeSidKey" : payload.localeSidKey,
+	"languageLocaleKey" : payload.languageLocaleKey,
+	"emailEncodingKey" : payload.emailEncodingKey,
+	"timeZoneSidKey" : payload.timeZoneSidKey,
+	"profileId" : p('system.api.user.sfdc.profileId')
+}]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+					<logger level="INFO" doc:name="Log mocked SFDC POST" doc:id="ab58df52-d500-4aa2-84b4-36891e14cb76" message="Mocked SFDC POST, payload=#[payload]" />
+					<ee:transform doc:name="mock API response" doc:id="63605b9b-91c2-4cbe-8491-ad518eb0016f" >
+						<ee:message >
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"id":"mockedSFDCId"
+}]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+				</route>
+				<route >
+					<logger level="INFO" doc:name="Log Netsuite branch" doc:id="3fe5820c-a9f7-4289-91c9-8ed3e5406b46" message="Netsuite employee process"/>
+					<ee:transform doc:name="Transform Message" doc:id="34127de7-3530-4e1b-90f6-91073fdca684" >
+						<ee:message >
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"firstName" : payload.firstName,
+	"lastName" : payload.lastName
+}]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+					<logger level="INFO" doc:name="Log mocked Netsuite POST" doc:id="7c0256f1-e460-4283-8d84-44a5e82791e9" message="Mocked Netsuite POST, payload=#[payload]"/>
+					<ee:transform doc:name="mock API response" doc:id="c4d64c01-c1f1-4212-9aaa-d96f98e66cdb">
+						<ee:message>
+							<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"id":"mockedNetsuiteId"
+}]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+				</route>
+				<route >
+					<logger level="INFO" doc:name="Log Workday branch" doc:id="f1d197d5-5cac-41f1-9874-04569d4c5dfa" message="Workday employee process"/>
+					<ee:transform doc:name="Transform Message" doc:id="2334fa08-c28d-4cfb-aef7-600c24d2ea2e">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"firstName" : payload.firstName,
+	"lastName" : payload.lastName
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+					<logger level="INFO" doc:name="Log mocked Workday POST" doc:id="f33cf9c0-4d08-4eb4-bf6b-fe6c4ea63652" message="Mocked Workday POST, payload=#[payload]" />
+					<ee:transform doc:name="mock API response" doc:id="2d5747c1-83b3-4162-896f-e0b6756cfa77">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"id":"mockedWorkdayId"
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+				</route>
+			</scatter-gather>
+			<ee:transform doc:name="Merge results" doc:id="1757e708-c26a-4e7e-9ee6-f00abbdadf01">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"sfdcId":payload[0].id,
+	"netsuiteId":payload[1].id,
+	"workdayId":payload[2].id
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+			<logger level="INFO" doc:name="Log mocked POST employee mapping" doc:id="9c85e5c0-cc25-4338-8c99-13ebc65af05c" message="Mocked employee mapping POST, payload=#[payload]"/>
+		</async>
+		<set-payload value="#['Accepted']" doc:name="Set Payload" doc:id="d563a8ad-e9a6-4f4f-ad40-6c253a331a7e" />
+	</flow>
+</mule>
