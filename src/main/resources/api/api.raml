@@ -1,0 +1,67 @@
+#%RAML 1.0
+title: Process API
+version: v1.0
+baseUri: http://localhost:8081/api
+
+types:
+  Employee: !include dataTypes/Employee.raml
+  ErrorResponse: !include dataTypes/ErrorResponse.raml
+  SuccessResponse: !include dataTypes/SuccessResponse.raml
+
+traits:
+  employeeSearch: !include traits/trait-collection.raml
+
+/employees:
+  displayName: Start generation of employees 
+  post:
+    description: |
+      Creates the employee in all the system APIs
+    responses:
+      202:
+        description: Accepted and sent for processing
+    body: 
+      application/json:
+        type: Employee
+        example: !include examples/post_employee_example.json
+        
+  /{id}:
+    displayName: Get Employee process status with specific ID
+    uriParameters:
+      id:
+        type: string
+        example: 20a5ea46-a4ee-4542-93f4-9040a4ec078b
+        description: Represents the employee process unique id in form of UUID
+    get:
+      description: Get Employee process status by ID
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include examples/get_employee_example.json
+        404:
+          body:
+            application/json:
+              type: ErrorResponse
+ 
+/queue/{id}:
+    displayName: Get queue status for Employees onboarding process with specific ID
+    uriParameters:
+      id:
+        type: string
+        example: 20a5ea46-a4ee-4542-93f4-9040a4ec078b
+        description: Represents the employee onboarding process unique id in form of UUID
+    get:
+      description: Get queue status for Employees onboarding process by ID
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  "message": "In progress"
+                }
+        303:         
+        404:
+          body:
+            application/json:
+              type: ErrorResponse
