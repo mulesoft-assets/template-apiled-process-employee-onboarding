@@ -12,7 +12,6 @@
   "classLoaderModelLoaderDescriptor": {
     "id": "mule",
     "attributes": {
-      "exportedPackages": [],
       "exportedResources": [
         "api\\api.raml",
         "api\\dataTypes\\Employee.raml",
@@ -21,7 +20,8 @@
         "api\\examples\\get_employee_example.json",
         "api\\examples\\post_employee_example.json",
         "api\\traits\\trait-collection.raml"
-      ]
+      ],
+      "exportedPackages": []
     }
   },
   "bundleDescriptorLoader": {

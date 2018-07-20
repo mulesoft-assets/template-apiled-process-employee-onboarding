@@ -111,14 +111,41 @@ output application/json
 output application/json
 ---
 {
-	"sfdcId":payload[0].id,
-	"netsuiteId":payload[1].id,
-	"workdayId":payload[2].id
+	"sfdcId":payload[0].payload.id,
+	"netsuiteId":payload[1].payload.id,
+	"workdayId":payload[2].payload.id
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 			<logger level="INFO" doc:name="Log mocked POST employee mapping" doc:id="9c85e5c0-cc25-4338-8c99-13ebc65af05c" message="Mocked employee mapping POST, payload=#[payload]"/>
 		</async>
-		<set-payload value="#['Accepted']" doc:name="Set Payload" doc:id="d563a8ad-e9a6-4f4f-ad40-6c253a331a7e" />
+		<ee:transform doc:name="Transform Message" doc:id="4a2c839b-d26a-45e1-bb69-b22586d96f8f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output text/plain
+---
+"Accepted"
+]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+202]]></ee:set-variable>
+				<ee:set-variable variableName="outboundHeaders" ><![CDATA[%dw 2.0
+output application/java
+---
+{"Location":"http://" ++ p("api.domain") ++ p("api.basePath") ++ "/queue/"}
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="301656e1-b850-412a-97d4-32b9b021e544" message="End of postEmployeeProcessFlow"/>
+	
+</flow>
+	<flow name="getQueueFlow" doc:id="c062cfb3-4fb5-497a-9d9f-bc11d489ff76" >
+		<logger level="INFO" doc:name="Logger" doc:id="a184b508-e53e-45d4-95b3-bce83bd9ffbb" message="Start of getQueueFlow"/>
+	</flow>
+	<flow name="getEmployeeByIdFlow" doc:id="2faf51a6-8070-4f43-a87f-e576c016f1f2" >
+		<logger level="INFO" doc:name="Logger" doc:id="46240162-9652-4ab2-9feb-7b3c39a02115" message="Start of getEmployeeByIdFlow"/>
 	</flow>
 </mule>
