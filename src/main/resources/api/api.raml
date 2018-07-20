@@ -18,12 +18,15 @@ traits:
       Creates the employee in all the system APIs
     responses:
       202:
+        body:
+          text/plain:
+            example: "Accepted"
         description: Accepted and sent for processing
     body: 
       application/json:
         type: Employee
         example: !include examples/post_employee_example.json
-        
+      
   /{id}:
     displayName: Get Employee process status with specific ID
     uriParameters:
