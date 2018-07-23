@@ -62,10 +62,8 @@ First thing to know if you are a newcomer to Mule is where to get the tools.
 ### Importing an Anypoint Template into Studio
 Mule Studio offers several ways to import a project into the workspace, for instance: 
 
-+ Anypoint Studio generated Deployable Archive (.zip)
-+ Anypoint Studio Project from External Location
-+ Maven-based Mule Project from pom.xml
-+ Mule ESB Configuration XML from External Location
++ Anypoint Studio Project from File System
++ Packaged mule application (.jar)
 
 You can find a detailed description on how to do so in this [Documentation Page](http://www.mulesoft.org/documentation/display/current/Importing+and+Exporting+in+Studio).
 
@@ -98,33 +96,33 @@ In order to use this Mule Anypoint Template you need to configure properties (Cr
 ### Application configuration
 **Common configuration**
 
-+ https.port `8082`
++ http.port `8081`
 
 **APIs configuration**
 
-+ keystore.location `keystore.jks` 
-+ keystore.password `pass123!`
-+ key.password `pass123!`
-+ key.alias `1`
-
++ api.domain `your-destination-api.cloudhub.io:80`
 + api.basePath `/api`
 
 + system.api.employee.nets.domain `your-destination-nets-system-api.cloudhub.io`
 + system.api.employee.nets.http.port `9091`
 + system.api.employee.nets.basePath `/api1`
++ system.api.employee.nets.protocol `HTTPS`
 
 + system.api.employee.wday.domain `your-destination-wday-system-api.cloudhub.io`
 + system.api.employee.wday.http.port `9092`
 + system.api.employee.wday.basePath `/api2`
++ system.api.employee.wday.protocol `HTTPS`
 
 + system.api.user.sfdc.domain `your-destination-sfdc-system-api.cloudhub.io`
 + system.api.user.sfdc.http.port `9093`
 + system.api.user.sfdc.basePath `/api3`
++ system.api.user.sfdc.protocol `HTTPS`
 + system.api.user.sfdc.profileId `1abda9823bbaaaaaa`
 
 + process.api.employee.lookup.domain `your-lookup-process-api.cloudhub.io`
 + process.api.employee.lookup.http.port `9094`
 + process.api.employee.lookup.basePath `/api4`
++ process.api.employee.lookup.protocol `HTTP`
 
 
 # Customize It!<a name="customizeit"/>
@@ -151,7 +149,7 @@ This file contains the routing logic of the API and the global exception strateg
 
 * [process-implementation.xml](#processimplementation)
 
-## process-implementation.xml<a name="processimplementation"/>
+## implementation.xml<a name="processimplementation"/>
 
 A functional aspect of this Anypoint Template implemented in this XML is to create Employees in parallel invoking multiple CRUD system APIs. You can customize and extend the logic of this Anypoint Template in this XML to more specifically meet your needs.
 
