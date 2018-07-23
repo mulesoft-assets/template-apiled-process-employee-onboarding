@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:employeelookupprocess-api="http://www.mulesoft.org/schema/mule/employeelookupprocess-api"
-	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:os="http://www.mulesoft.org/schema/mule/os" xsi:schemaLocation="
+<mule xmlns:employee-workday-system-api="http://www.mulesoft.org/schema/mule/employee-workday-system-api"
+	xmlns:employee-net-suite-system-api="http://www.mulesoft.org/schema/mule/employee-net-suite-system-api" xmlns:user-salesforce-system-api="http://www.mulesoft.org/schema/mule/user-salesforce-system-api"
+	xmlns:employeelookupprocess-api="http://www.mulesoft.org/schema/mule/employeelookupprocess-api"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:os="http://www.mulesoft.org/schema/mule/os" xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
-http://www.mulesoft.org/schema/mule/employeelookupprocess-api http://www.mulesoft.org/schema/mule/employeelookupprocess-api/current/mule-employeelookupprocess-api.xsd">
+http://www.mulesoft.org/schema/mule/employeelookupprocess-api http://www.mulesoft.org/schema/mule/employeelookupprocess-api/current/mule-employeelookupprocess-api.xsd
+http://www.mulesoft.org/schema/mule/user-salesforce-system-api http://www.mulesoft.org/schema/mule/user-salesforce-system-api/current/mule-user-salesforce-system-api.xsd
+http://www.mulesoft.org/schema/mule/employee-net-suite-system-api http://www.mulesoft.org/schema/mule/employee-net-suite-system-api/current/mule-employee-net-suite-system-api.xsd
+http://www.mulesoft.org/schema/mule/employee-workday-system-api http://www.mulesoft.org/schema/mule/employee-workday-system-api/current/mule-employee-workday-system-api.xsd">
 
 	<configuration-properties doc:name="Configuration properties" doc:id="7305b8b1-e587-4752-acb3-1297d0d1587d" file="common.properties" />
 	<configuration-properties doc:name="Configuration properties" doc:id="bfc8649f-d26c-4291-802d-21b23d9ea565" file="mule-artifact.properties" />
 	<configuration-properties doc:name="Configuration properties" doc:id="1b366b1d-0971-449e-9940-2c8aae6fb9cd" file="mule.${mule.env}.properties" />	
 
 	<os:object-store name="Object_store" doc:name="Object store" doc:id="7ccc4b28-f663-4380-bf1e-2bcf29e78531" />
-	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="0613178b-7f17-4624-b1c5-f58252120c5b" basePath="/api">
-		<http:request-connection host="dev-apiled-process-employee-lookup-41.us-w1.cloudhub.io" port="80" />
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="0613178b-7f17-4624-b1c5-f58252120c5b" basePath="${process.api.employee.lookup.basePath}">
+		<http:request-connection host="${process.api.employee.lookup.domain}" port="${process.api.employee.lookup.http.port}" />
 	</http:request-config>
-	<employeelookupprocess-api:config name="Employee_lookup_process_API_Config" doc:name="Employee lookup process API Config" doc:id="0e29e70c-c598-47e8-b18f-4493e7c5c87f" property_host="dev-apiled-process-employee-lookup-41.us-w1.cloudhub.io" property_port="80" property_basePath="/api" property_protocol="HTTP"/>
+	<employeelookupprocess-api:config name="Employee_lookup_process_API_Config" doc:name="Employee lookup process API Config" doc:id="0e29e70c-c598-47e8-b18f-4493e7c5c87f" property_host="${process.api.employee.lookup.domain}" property_port="${process.api.employee.lookup.http.port}" property_basePath="${process.api.employee.lookup.basePath}" property_protocol="HTTP"/>
+	<user-salesforce-system-api:config name="User_Salesforce_System_API_Config" doc:name="User Salesforce System API Config" doc:id="b0727908-2cf9-414a-a508-fcbc09e4738f" property_host="${system.api.user.sfdc.domain}" property_port="${system.api.user.sfdc.http.port}" property_basePath="${system.api.user.sfdc.basePath}" property_protocol="HTTPS" />
+	<employee-net-suite-system-api:config name="Employee_NetSuite_System_API_Config" doc:name="Employee NetSuite System API Config" doc:id="05c73cbe-54f5-4911-802b-57fe7ba2b38c" property_host="${system.api.employee.nets.domain}" property_port="${system.api.employee.nets.http.port}" property_basePath="${system.api.employee.nets.basePath}" property_protocol="HTTPS" />
+	<employee-workday-system-api:config name="Employee_Workday_System_API_Config" doc:name="Employee Workday System API Config" doc:id="bb2f8e5e-4163-4095-aa51-cea5bb873893" property_host="${system.api.employee.wday.domain}" property_port="${system.api.employee.wday.http.port}" property_basePath="${system.api.employee.wday.basePath}" property_protocol="HTTPS" />
 
 	</mule>

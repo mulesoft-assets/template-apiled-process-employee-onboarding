@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:employeelookupprocess-api="http://www.mulesoft.org/schema/mule/employeelookupprocess-api"
-	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:employee-workday-system-api="http://www.mulesoft.org/schema/mule/employee-workday-system-api"
+	xmlns:employee-net-suite-system-api="http://www.mulesoft.org/schema/mule/employee-net-suite-system-api" xmlns:user-salesforce-system-api="http://www.mulesoft.org/schema/mule/user-salesforce-system-api" xmlns:employeelookupprocess-api="http://www.mulesoft.org/schema/mule/employeelookupprocess-api" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-http://www.mulesoft.org/schema/mule/employeelookupprocess-api http://www.mulesoft.org/schema/mule/employeelookupprocess-api/current/mule-employeelookupprocess-api.xsd">
+http://www.mulesoft.org/schema/mule/employeelookupprocess-api http://www.mulesoft.org/schema/mule/employeelookupprocess-api/current/mule-employeelookupprocess-api.xsd
+http://www.mulesoft.org/schema/mule/user-salesforce-system-api http://www.mulesoft.org/schema/mule/user-salesforce-system-api/current/mule-user-salesforce-system-api.xsd
+http://www.mulesoft.org/schema/mule/employee-net-suite-system-api http://www.mulesoft.org/schema/mule/employee-net-suite-system-api/current/mule-employee-net-suite-system-api.xsd
+http://www.mulesoft.org/schema/mule/employee-workday-system-api http://www.mulesoft.org/schema/mule/employee-workday-system-api/current/mule-employee-workday-system-api.xsd">
 
 	<flow name="postEmployeeProcessFlow" doc:id="38697d6d-5bc9-4d65-8646-8bae278df246" >
 		<set-variable value="#[uuid()]" doc:name="Set Variable" doc:id="f1267286-d9d6-4865-b75a-0dda166f6f16" variableName="uniqueID"/>
@@ -39,65 +42,16 @@ output application/json
 }]]></ee:set-payload>
 						</ee:message>
 					</ee:transform>
-					<logger level="INFO" doc:name="Log mocked SFDC POST" doc:id="ab58df52-d500-4aa2-84b4-36891e14cb76" message="Mocked SFDC POST, payload=#[payload]" />
-					<ee:transform doc:name="mock API response" doc:id="63605b9b-91c2-4cbe-8491-ad518eb0016f" >
-						<ee:message >
-							<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-	"id":"mockedSFDCId"
-}]]></ee:set-payload>
-						</ee:message>
-					</ee:transform>
+					<user-salesforce-system-api:create-user doc:name="Create user" doc:id="4258f39b-108c-4ef2-ba0a-9a60c9826a10" config-ref="User_Salesforce_System_API_Config" />
+					<logger level="INFO" doc:name="Logger" doc:id="0b2b035b-ba44-421c-a35f-5c0ee16df74f" message="SFDC user created, payload=#[payload]" />
 				</route>
 				<route >
-					<ee:transform doc:name="Transform Message" doc:id="34127de7-3530-4e1b-90f6-91073fdca684" >
-						<ee:message >
-							<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-	"firstName" : payload.firstName,
-	"lastName" : payload.lastName
-}]]></ee:set-payload>
-						</ee:message>
-					</ee:transform>
-					<logger level="INFO" doc:name="Log mocked Netsuite POST" doc:id="7c0256f1-e460-4283-8d84-44a5e82791e9" message="Mocked Netsuite POST, payload=#[payload]"/>
-					<ee:transform doc:name="mock API response" doc:id="c4d64c01-c1f1-4212-9aaa-d96f98e66cdb">
-						<ee:message>
-							<ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-	"id":"mockedNetsuiteId"
-}]]></ee:set-payload>
-						</ee:message>
-					</ee:transform>
+					<logger level="INFO" doc:name="Log Netsuite POST" doc:id="7c0256f1-e460-4283-8d84-44a5e82791e9" message="Mocked Netsuite POST, payload=#[payload]" />
+					<employee-net-suite-system-api:create-employee doc:name="Create employee" doc:id="bd612d04-84e2-4e14-a343-2cfd36c27b60" config-ref="Employee_NetSuite_System_API_Config"/>
 				</route>
 				<route >
-					<ee:transform doc:name="Transform Message" doc:id="2334fa08-c28d-4cfb-aef7-600c24d2ea2e">
-				<ee:message>
-					<ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-	"firstName" : payload.firstName,
-	"lastName" : payload.lastName
-}]]></ee:set-payload>
-				</ee:message>
-			</ee:transform>
-					<logger level="INFO" doc:name="Log mocked Workday POST" doc:id="f33cf9c0-4d08-4eb4-bf6b-fe6c4ea63652" message="Mocked Workday POST, payload=#[payload]" />
-					<ee:transform doc:name="mock API response" doc:id="2d5747c1-83b3-4162-896f-e0b6756cfa77">
-				<ee:message>
-					<ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-	"id":"mockedWorkdayId"
-}]]></ee:set-payload>
-				</ee:message>
-			</ee:transform>
+					<logger level="INFO" doc:name="Log Workday POST" doc:id="f33cf9c0-4d08-4eb4-bf6b-fe6c4ea63652" message="Mocked Workday POST, payload=#[payload]" />
+					<employee-workday-system-api:create-employee doc:name="Create employee" doc:id="96286111-7f6c-4946-94d0-12141fe13078" config-ref="Employee_Workday_System_API_Config"/>
 				</route>
 			</scatter-gather>
 			<ee:transform doc:name="Merge results" doc:id="1757e708-c26a-4e7e-9ee6-f00abbdadf01">
