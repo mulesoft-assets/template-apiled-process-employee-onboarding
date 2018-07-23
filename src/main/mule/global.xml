@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+<mule xmlns:employeelookupprocess-api="http://www.mulesoft.org/schema/mule/employeelookupprocess-api"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:os="http://www.mulesoft.org/schema/mule/os"
-	xsi:schemaLocation="
+	xmlns:os="http://www.mulesoft.org/schema/mule/os" xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/employeelookupprocess-api http://www.mulesoft.org/schema/mule/employeelookupprocess-api/current/mule-employeelookupprocess-api.xsd">
 
 	<configuration-properties doc:name="Configuration properties" doc:id="7305b8b1-e587-4752-acb3-1297d0d1587d" file="common.properties" />
 	<configuration-properties doc:name="Configuration properties" doc:id="bfc8649f-d26c-4291-802d-21b23d9ea565" file="mule-artifact.properties" />
@@ -16,5 +17,6 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="0613178b-7f17-4624-b1c5-f58252120c5b" basePath="/api">
 		<http:request-connection host="dev-apiled-process-employee-lookup-41.us-w1.cloudhub.io" port="80" />
 	</http:request-config>
+	<employeelookupprocess-api:config name="Employee_lookup_process_API_Config" doc:name="Employee lookup process API Config" doc:id="0e29e70c-c598-47e8-b18f-4493e7c5c87f" property_host="dev-apiled-process-employee-lookup-41.us-w1.cloudhub.io" property_port="80" property_basePath="/api" property_protocol="HTTP"/>
 
 	</mule>

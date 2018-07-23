@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:employeelookupprocess-api="http://www.mulesoft.org/schema/mule/employeelookupprocess-api"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/employeelookupprocess-api http://www.mulesoft.org/schema/mule/employeelookupprocess-api/current/mule-employeelookupprocess-api.xsd">
 
 	<flow name="postEmployeeProcessFlow" doc:id="38697d6d-5bc9-4d65-8646-8bae278df246" >
 		<set-variable value="#[uuid()]" doc:name="Set Variable" doc:id="f1267286-d9d6-4865-b75a-0dda166f6f16" variableName="uniqueID"/>
@@ -111,7 +112,7 @@ output application/json
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-			<http:request method="POST" doc:name="Request" doc:id="34c88783-07b3-46df-b7a6-77cd48e015ec" config-ref="HTTP_Request_configuration" path="/employees"/>
+			<employeelookupprocess-api:create-employee doc:name="Create employee" doc:id="aed64fc2-1e1a-45c7-a486-a43a9aaeda81" config-ref="Employee_lookup_process_API_Config"/>
 			<ee:transform doc:name="Transform Message" doc:id="23ce0977-dccc-4fd3-a3f0-948803c9f3bd" >
 				<ee:message >
 					<ee:set-payload ><![CDATA[%dw 2.0
@@ -222,13 +223,7 @@ output application/java
 	</flow>
 	<flow name="getEmployeeByIdFlow" doc:id="2faf51a6-8070-4f43-a87f-e576c016f1f2" >
 		<set-variable value="#[attributes.uriParams.id]" doc:name="Set Variable id" doc:id="6cdd2e02-3abe-4550-952a-a2cac90d789a" variableName="id" />
-		<http:request method="GET" doc:name="Request" doc:id="b38f0982-b548-46de-90aa-b915f6f4d895" config-ref="HTTP_Request_configuration" path="/employees/{id}">
-			<http:uri-params ><![CDATA[#[output applicaton/java
----
-{
-	"id" : vars.id
-}]]]></http:uri-params>
-		</http:request>
+		<employeelookupprocess-api:get-employee-by-id doc:name="Get employee by id" doc:id="9f1b9726-724b-4ca9-92d6-bc3339f0ad39" config-ref="Employee_lookup_process_API_Config" id="#[vars.id]"/>
 		<ee:transform doc:name="Transform Message" doc:id="ece1543c-2356-4ff6-9324-a17084606898" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
