@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:retail-orders-system-api="http://www.mulesoft.org/schema/mule/retail-orders-system-api" xmlns:os="http://www.mulesoft.org/schema/mule/os"
-	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
+	xmlns:retail-orders-system-api="http://www.mulesoft.org/schema/mule/retail-orders-system-api"
+	xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
-http://www.mulesoft.org/schema/mule/retail-orders-system-api http://www.mulesoft.org/schema/mule/retail-orders-system-api/current/mule-retail-orders-system-api.xsd">
+http://www.mulesoft.org/schema/mule/retail-orders-system-api http://www.mulesoft.org/schema/mule/retail-orders-system-api/current/mule-retail-orders-system-api.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 	<os:object-store name="Object_store" doc:name="Object store" doc:id="7ccc4b28-f663-4380-bf1e-2bcf29e78531" />
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="0613178b-7f17-4624-b1c5-f58252120c5b" basePath="/api">
+		<http:request-connection host="dev-apiled-process-employee-lookup-41.us-w1.cloudhub.io" port="80" />
+	</http:request-config>
 	<flow name="postEmployeeProcessFlow" doc:id="38697d6d-5bc9-4d65-8646-8bae278df246" >
-		<logger level="INFO" doc:name="Logger" doc:id="9e662459-a93c-4569-850a-3565df7eca27" message="POST employee"/>
 		<set-variable value="#[uuid()]" doc:name="Set Variable" doc:id="f1267286-d9d6-4865-b75a-0dda166f6f16" variableName="uniqueID"/>
-		<logger level="INFO" doc:name="Logger" doc:id="f72cc24e-45dc-4307-887a-3057486ddb58" message="uniqueID=#[vars.uniqueID]"/>
 		<os:store doc:name="Store vars.uniqueID" doc:id="f7f0d3f4-ad96-4429-9600-4c28afd14f3f" key="#[vars.uniqueID]" objectStore="Object_store">
 			<os:value ><![CDATA[#['']]]></os:value>
 		</os:store>
 		<async doc:name="Async" doc:id="2d133d9e-b752-4269-b145-ad85aaf02855" >
 			<scatter-gather doc:name="Scatter-Gather" doc:id="cb771e58-ae1d-4593-b709-6d2ec1a4cbec" >
 				<route >
-					<logger level="INFO" doc:name="Log SFDC branch" doc:id="6e8ee7e4-1dba-42e4-a6e5-b08c0d076333" message="SFDC employee process"/>
 					<ee:transform doc:name="Transform Message" doc:id="c2a7a760-81d4-4065-ae2a-64dc05c50edc" >
 						<ee:message >
 							<ee:set-payload ><![CDATA[%dw 2.0
@@ -55,7 +57,6 @@ output application/json
 					</ee:transform>
 				</route>
 				<route >
-					<logger level="INFO" doc:name="Log Netsuite branch" doc:id="3fe5820c-a9f7-4289-91c9-8ed3e5406b46" message="Netsuite employee process"/>
 					<ee:transform doc:name="Transform Message" doc:id="34127de7-3530-4e1b-90f6-91073fdca684" >
 						<ee:message >
 							<ee:set-payload ><![CDATA[%dw 2.0
@@ -80,7 +81,6 @@ output application/json
 					</ee:transform>
 				</route>
 				<route >
-					<logger level="INFO" doc:name="Log Workday branch" doc:id="f1d197d5-5cac-41f1-9874-04569d4c5dfa" message="Workday employee process"/>
 					<ee:transform doc:name="Transform Message" doc:id="2334fa08-c28d-4cfb-aef7-600c24d2ea2e">
 				<ee:message>
 					<ee:set-payload><![CDATA[%dw 2.0
@@ -117,7 +117,19 @@ output application/json
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-			<logger level="INFO" doc:name="Log mocked POST employee mapping" doc:id="9c85e5c0-cc25-4338-8c99-13ebc65af05c" message="Mocked employee mapping POST, payload=#[payload]"/>
+			<http:request method="POST" doc:name="Request" doc:id="34c88783-07b3-46df-b7a6-77cd48e015ec" config-ref="HTTP_Request_configuration" path="/employees"/>
+			<ee:transform doc:name="Transform Message" doc:id="23ce0977-dccc-4fd3-a3f0-948803c9f3bd" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+	payload
+]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<os:store doc:name="Store" doc:id="a29d47cd-1e5d-4b7a-be46-d79e445d6c9a" key="#[vars.uniqueID]" objectStore="Object_store">
+				<os:value ><![CDATA[#[payload.id]]]></os:value>
+			</os:store>
 		</async>
 		<ee:transform doc:name="Transform Message" doc:id="4a2c839b-d26a-45e1-bb69-b22586d96f8f" >
 			<ee:message >
@@ -135,17 +147,109 @@ output application/java
 				<ee:set-variable variableName="outboundHeaders" ><![CDATA[%dw 2.0
 output application/java
 ---
-{"Location":"http://" ++ p("api.domain") ++ p("api.basePath") ++ "/queue/"}
+{"Location":"http://" ++ p("api.domain") ++ p("api.basePath") ++ "/queue/" ++ vars.uniqueID}
 ]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<logger level="INFO" doc:name="Logger" doc:id="301656e1-b850-412a-97d4-32b9b021e544" message="End of postEmployeeProcessFlow"/>
 	
 </flow>
 	<flow name="getQueueFlow" doc:id="c062cfb3-4fb5-497a-9d9f-bc11d489ff76" >
-		<logger level="INFO" doc:name="Logger" doc:id="a184b508-e53e-45d4-95b3-bce83bd9ffbb" message="Start of getQueueFlow"/>
+		<set-variable value="#[attributes.uriParams.id]" doc:name="Set Variable id" doc:id="526bf45c-24a3-44ea-ba1d-23d4d6a51289" variableName="id"/>
+		<os:contains doc:name="Contains" doc:id="b695dd65-a95e-40a6-9be9-24a4a03164b8" objectStore="Object_store" key="#[vars.id]"/>
+		<choice doc:name="Does id exist?" doc:id="5e9e6eb5-ba89-44f5-b711-1ca25c5a211d" >
+			<when expression="payload" >
+				<os:retrieve doc:name="Retrieve" doc:id="b062003c-3a24-49dd-95e6-59a2de03a245" key="#[vars.id]" objectStore="Object_store"/>
+				<choice doc:name="Process has finished?" doc:id="7a611d86-75db-4da9-a9b1-3bab26ea08f4" >
+					<when expression="payload==''" >
+						<ee:transform doc:name="Set HTTP status 200 - In progress" doc:id="f5db450b-2f01-44aa-86a1-4bbac2114580">
+							<ee:message>
+								<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message":"In progress."
+}
+]]></ee:set-payload>
+							</ee:message>
+							<ee:variables>
+								<ee:set-variable variableName="httpStatus"><![CDATA[%dw 2.0
+output application/java
+---
+200]]></ee:set-variable>
+							</ee:variables>
+						</ee:transform>
+					</when>
+					<otherwise >
+						<ee:transform doc:name="Set HTTP status 303 and location" doc:id="b62e7d79-3bb1-415a-819b-96b12b9532c3">
+							<ee:message>
+								<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message":"Processed."
+}
+]]></ee:set-payload>
+							</ee:message>
+							<ee:variables>
+								<ee:set-variable variableName="httpStatus"><![CDATA[%dw 2.0
+output application/java
+---
+303]]></ee:set-variable>
+								<ee:set-variable variableName="outboundHeaders"><![CDATA[%dw 2.0
+output application/java
+---
+{"Location":"http://" ++ p("api.domain") ++ p("api.basePath") ++ "/employees/" ++ payload}
+]]></ee:set-variable>
+							</ee:variables>
+						</ee:transform>
+					</otherwise>
+				</choice>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Set HTTP status 404 - Rsc not found" doc:id="c0f25ee2-c510-4941-8c4a-346a84095884" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message":"Resource not found."
+}
+]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+404]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</otherwise>
+		</choice>
 	</flow>
 	<flow name="getEmployeeByIdFlow" doc:id="2faf51a6-8070-4f43-a87f-e576c016f1f2" >
-		<logger level="INFO" doc:name="Logger" doc:id="46240162-9652-4ab2-9feb-7b3c39a02115" message="Start of getEmployeeByIdFlow"/>
+		<set-variable value="#[attributes.uriParams.id]" doc:name="Set Variable id" doc:id="6cdd2e02-3abe-4550-952a-a2cac90d789a" variableName="id" />
+		<http:request method="GET" doc:name="Request" doc:id="b38f0982-b548-46de-90aa-b915f6f4d895" config-ref="HTTP_Request_configuration" path="/employees/{id}">
+			<http:uri-params ><![CDATA[#[output applicaton/java
+---
+{
+	"id" : vars.id
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="ece1543c-2356-4ff6-9324-a17084606898" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var sfdcSysPath = "http://" ++ p("system.api.user.sfdc.domain") ++ ":" ++ p("system.api.user.sfdc.http.port") ++ p("system.api.user.sfdc.basePath") ++ "/users/"
+var netsuiteSysPath = "http://" ++ p("system.api.employee.nets.domain") ++ ":" ++ p("system.api.employee.nets.http.port") ++ p("system.api.employee.nets.basePath") ++ "/employees/"
+var workdaySysPath = "http://" ++ p("system.api.employee.wday.domain") ++ ":" ++ p("system.api.employee.wday.http.port") ++ p("system.api.employee.wday.basePath") ++ "/employees/"
+---
+{
+	"id": payload.id,
+	"employeeSfdcUrl": sfdcSysPath ++ payload.sfdcId,
+	"employeeNetsuiteUrl": netsuiteSysPath ++ payload.netsuiteId,
+	"employeeWorkdayUrl": workdaySysPath ++ payload.workdayId
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
 	</flow>
 </mule>
