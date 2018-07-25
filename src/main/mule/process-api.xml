@@ -3,7 +3,7 @@
     <http:listener-config name="api-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="${http.port}" />
     </http:listener-config>
-    <apikit:config name="api-config" raml="api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="api-config" raml="api/process-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="api-main">
         <http:listener config-ref="api-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -124,68 +124,12 @@ output application/json
         </error-handler>
     </flow>
     <flow name="get:\employees\(id):api-config">
-        <ee:transform doc:name="Transform Message" doc:id="1dcc0d31-d211-4121-bc2f-0f8875f08a72" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-  id: "asdasfsa89f7s87faas87f98as7f98sa7",
-  employeeSfdcUrl: "https://system-employee-sfdc.cloudhub.io/api/employees/567568pou",
-  employeeNetsuiteUrl: "https://system-employee-nets.cloudhub.io/api/employees/sdfds5657",
-  employeeWorkdayUrl: "https://system-employee-wday.cloudhub.io/api/employees/123567"
-}]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
-        <ee:transform doc:name="Transform Message" doc:id="75e6eddd-03f9-4c05-bfcc-af9f79673f5a" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-  id: "asdasfsa89f7s87faas87f98as7f98sa7",
-  employeeSfdcUrl: "https://system-employee-sfdc.cloudhub.io/api/employees/567568pou",
-  employeeNetsuiteUrl: "https://system-employee-nets.cloudhub.io/api/employees/sdfds5657",
-  employeeWorkdayUrl: "https://system-employee-wday.cloudhub.io/api/employees/123567"
-}]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
         <flow-ref doc:name="getEmployeeByIdFlow" doc:id="10dc9205-a6f2-431a-9298-663d3d03c48c" name="getEmployeeByIdFlow" />
     </flow>
     <flow name="get:\queue\(id):api-config">
-        <ee:transform doc:id="7b06627a-6edc-4135-9661-09b2c95db982">
-            <ee:variables>
-                <ee:set-variable variableName="id"><![CDATA[attributes.uriParams.id]]></ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="65dde6f8-0a45-4bcb-9a2d-7de14b813aed">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-  message: "In progress"
-}]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
         <flow-ref doc:name="getQueueFlow" doc:id="f4028b7f-0f32-4b6a-8ca4-cc8edab1bfa4" name="getQueueFlow" />
     </flow>
     <flow name="post:\employees:application\json:api-config">
         <flow-ref doc:name="postEmployeeProcessFlow" doc:id="c2c541b7-e464-4b8d-81ac-0c46e730240d" name="postEmployeeProcessFlow" />
-    </flow>
-    <flow name="get:\employees:api-config">
-        <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-  id: "asdasfsa89f7s87faas87f98as7f98sa7",
-  employeeSfdcUrl: "https://system-employee-sfdc.cloudhub.io/api/employees/567568pou",
-  employeeNetsuiteUrl: "https://system-employee-nets.cloudhub.io/api/employees/sdfds5657",
-  employeeWorkdayUrl: "https://system-employee-wday.cloudhub.io/api/employees/123567"
-}]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
     </flow>
 </mule>

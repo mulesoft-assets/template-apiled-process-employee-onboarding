@@ -14,13 +14,15 @@
     "attributes": {
       "exportedPackages": [],
       "exportedResources": [
-        "api\\api.raml",
+        "api\\.gitignore",
         "api\\dataTypes\\Employee.raml",
         "api\\dataTypes\\ErrorResponse.raml",
         "api\\dataTypes\\SuccessResponse.raml",
         "api\\examples\\get_employee_example.json",
         "api\\examples\\post_employee_example.json",
-        "api\\traits\\trait-collection.raml"
+        "api\\template-apiled-process-employee-onbo.raml",
+        "api\\traits\\trait-collection.raml",
+        "api\\process-api.raml"
       ]
     }
   },
