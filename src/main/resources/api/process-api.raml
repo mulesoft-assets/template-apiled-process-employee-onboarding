@@ -1,7 +1,6 @@
 #%RAML 1.0
-title: Process API
-version: v1.0
-baseUri: http://localhost:8081/api
+title: Employee onborading process API
+version: v2.0
 
 types:
   Employee: !include dataTypes/Employee.raml
@@ -19,8 +18,10 @@ traits:
     responses:
       202:
         body:
-          text/plain:
-            example: "Accepted"
+          application/json:
+            example: {
+              "status": "Accepted"
+            }
         description: Accepted and sent for processing
     body: 
       application/json:
