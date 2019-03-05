@@ -13,6 +13,7 @@ traits:
 /employees:
   displayName: Start generation of employees 
   post:
+    displayName: Create Employee
     description: |
       Creates the employee in all the system APIs
     responses:
@@ -36,6 +37,7 @@ traits:
         example: 20a5ea46-a4ee-4542-93f4-9040a4ec078b
         description: Represents the employee process unique id in form of UUID
     get:
+      displayName: Get Employee by ID
       description: Get Employee process status by ID
       responses:
         200:
@@ -55,6 +57,7 @@ traits:
         example: 20a5ea46-a4ee-4542-93f4-9040a4ec078b
         description: Represents the employee onboarding process unique id in form of UUID
     get:
+      displayName: Get Queue Status
       description: Get queue status for Employees onboarding process by ID
       responses:
         200:
@@ -64,7 +67,7 @@ traits:
                 {
                   "message": "In progress"
                 }
-        303:         
+        303:      
         404:
           body:
             application/json:

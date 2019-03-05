@@ -11,14 +11,29 @@ http://www.mulesoft.org/schema/mule/employee-net-suite-system-api http://www.mul
 http://www.mulesoft.org/schema/mule/employee-workday-system-api http://www.mulesoft.org/schema/mule/employee-workday-system-api/current/mule-employee-workday-system-api.xsd">
 
 	<flow name="postEmployeeProcessFlow" doc:id="38697d6d-5bc9-4d65-8646-8bae278df246" >
-		<set-variable value="#[uuid()]" doc:name="Set Variable" doc:id="f1267286-d9d6-4865-b75a-0dda166f6f16" variableName="uniqueID"/>
-		<os:store doc:name="Store vars.uniqueID" doc:id="f7f0d3f4-ad96-4429-9600-4c28afd14f3f" key="#[vars.uniqueID]" objectStore="Object_store">
+		<ee:transform doc:name="Set path and uniqueID" doc:id="8c862298-3c40-443d-aeb7-179d45f45cd0" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="uniqueID" ><![CDATA[%dw 2.0
+output application/java
+---
+uuid()]]></ee:set-variable>
+				<ee:set-variable variableName="requestParams" ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	path: "http://" ++ attributes.headers.host ++ "/api/queue/"
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<os:store doc:name="Store uniqueID" doc:id="f7f0d3f4-ad96-4429-9600-4c28afd14f3f" key="#[vars.uniqueID]" objectStore="Object_store">
 			<os:value ><![CDATA[#['']]]></os:value>
 		</os:store>
 		<async doc:name="Async" doc:id="2d133d9e-b752-4269-b145-ad85aaf02855" >
 			<scatter-gather doc:name="Scatter-Gather" doc:id="cb771e58-ae1d-4593-b709-6d2ec1a4cbec" >
 				<route >
-					<ee:transform doc:name="Transform Message" doc:id="c2a7a760-81d4-4065-ae2a-64dc05c50edc" >
+					<ee:transform doc:name="Prepare request" doc:id="c2a7a760-81d4-4065-ae2a-64dc05c50edc" >
 						<ee:message >
 							<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
@@ -42,13 +57,13 @@ output application/json
 }]]></ee:set-payload>
 						</ee:message>
 					</ee:transform>
-					<user-salesforce-system-api:create-user doc:name="Create user" doc:id="4258f39b-108c-4ef2-ba0a-9a60c9826a10" config-ref="User_Salesforce_System_API_Config" />
+					<user-salesforce-system-api:create-user doc:name="Create user in SFDC" doc:id="4258f39b-108c-4ef2-ba0a-9a60c9826a10" config-ref="User_Salesforce_System_API_Config" />
 				</route>
 				<route >
-					<employee-net-suite-system-api:create-employee doc:name="Create employee" doc:id="bd612d04-84e2-4e14-a343-2cfd36c27b60" config-ref="Employee_NetSuite_System_API_Config"/>
+					<employee-net-suite-system-api:create-employee doc:name="Create employee in Nets" doc:id="bd612d04-84e2-4e14-a343-2cfd36c27b60" config-ref="Employee_NetSuite_System_API_Config"/>
 				</route>
 				<route >
-					<employee-workday-system-api:create-employee doc:name="Create employee" doc:id="96286111-7f6c-4946-94d0-12141fe13078" config-ref="Employee_Workday_System_API_Config"/>
+					<employee-workday-system-api:create-employee doc:name="Create employee in Wday" doc:id="96286111-7f6c-4946-94d0-12141fe13078" config-ref="Employee_Workday_System_API_Config"/>
 				</route>
 			</scatter-gather>
 			<ee:transform doc:name="Merge results" doc:id="1757e708-c26a-4e7e-9ee6-f00abbdadf01">
@@ -63,21 +78,12 @@ output application/json
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-			<employeelookupprocess-api:create-employee doc:name="Create employee" doc:id="aed64fc2-1e1a-45c7-a486-a43a9aaeda81" config-ref="Employee_lookup_process_API_Config"/>
-			<ee:transform doc:name="Transform Message" doc:id="23ce0977-dccc-4fd3-a3f0-948803c9f3bd" >
-				<ee:message >
-					<ee:set-payload ><![CDATA[%dw 2.0
-output application/java
----
-	payload
-]]></ee:set-payload>
-				</ee:message>
-			</ee:transform>
-			<os:store doc:name="Store" doc:id="a29d47cd-1e5d-4b7a-be46-d79e445d6c9a" key="#[vars.uniqueID]" objectStore="Object_store">
+			<employeelookupprocess-api:create-employee doc:name="Create employee lookup" doc:id="aed64fc2-1e1a-45c7-a486-a43a9aaeda81" config-ref="Employee_lookup_process_API_Config"/>
+			<os:store doc:name="Save data" doc:id="a29d47cd-1e5d-4b7a-be46-d79e445d6c9a" key="#[vars.uniqueID]" objectStore="Object_store">
 				<os:value ><![CDATA[#[payload.id]]]></os:value>
 			</os:store>
 		</async>
-		<ee:transform doc:name="Transform Message" doc:id="4a2c839b-d26a-45e1-bb69-b22586d96f8f" >
+		<ee:transform doc:name="Set Response Message and Status 202" doc:id="4a2c839b-d26a-45e1-bb69-b22586d96f8f" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
@@ -94,18 +100,35 @@ output application/java
 				<ee:set-variable variableName="outboundHeaders" ><![CDATA[%dw 2.0
 output application/java
 ---
-{"Location":"http://" ++ p("api.domain") ++ p("api.basePath") ++ "/queue/" ++ vars.uniqueID}
+{
+	Location: vars.requestParams.path ++ vars.uniqueID
+}
 ]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 	
 </flow>
 	<flow name="getQueueFlow" doc:id="c062cfb3-4fb5-497a-9d9f-bc11d489ff76" >
-		<set-variable value="#[attributes.uriParams.id]" doc:name="Set Variable id" doc:id="526bf45c-24a3-44ea-ba1d-23d4d6a51289" variableName="id"/>
-		<os:contains doc:name="Contains" doc:id="b695dd65-a95e-40a6-9be9-24a4a03164b8" objectStore="Object_store" key="#[vars.id]"/>
+		<ee:transform doc:name="Save path and id" doc:id="ae751dd4-553d-4bdd-afe7-06a81aedda80" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="id" ><![CDATA[%dw 2.0
+output application/java
+---
+attributes.uriParams.id]]></ee:set-variable>
+				<ee:set-variable variableName="requestParams" ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	path: "http://" ++ attributes.headers.host ++ "/api/employees/"
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<os:contains doc:name="Check Id" doc:id="b695dd65-a95e-40a6-9be9-24a4a03164b8" objectStore="Object_store" key="#[vars.id]"/>
 		<choice doc:name="Does id exist?" doc:id="5e9e6eb5-ba89-44f5-b711-1ca25c5a211d" >
 			<when expression="payload" >
-				<os:retrieve doc:name="Retrieve" doc:id="b062003c-3a24-49dd-95e6-59a2de03a245" key="#[vars.id]" objectStore="Object_store"/>
+				<os:retrieve doc:name="Retrieve Id" doc:id="b062003c-3a24-49dd-95e6-59a2de03a245" key="#[vars.id]" objectStore="Object_store"/>
 				<choice doc:name="Process has finished?" doc:id="7a611d86-75db-4da9-a9b1-3bab26ea08f4" >
 					<when expression="payload==''" >
 						<ee:transform doc:name="Set HTTP status 200 - In progress" doc:id="f5db450b-2f01-44aa-86a1-4bbac2114580">
@@ -142,11 +165,12 @@ output application/json
 output application/java
 ---
 303]]></ee:set-variable>
-								<ee:set-variable variableName="outboundHeaders"><![CDATA[%dw 2.0
+								<ee:set-variable variableName="outboundHeaders" ><![CDATA[%dw 2.0
 output application/java
 ---
-{"Location":"http://" ++ p("api.domain") ++ p("api.basePath") ++ "/employees/" ++ payload}
-]]></ee:set-variable>
+{
+	Location: vars.requestParams.path ++ payload
+}]]></ee:set-variable>
 							</ee:variables>
 						</ee:transform>
 					</otherwise>
@@ -175,8 +199,8 @@ output application/java
 	</flow>
 	<flow name="getEmployeeByIdFlow" doc:id="2faf51a6-8070-4f43-a87f-e576c016f1f2" >
 		<set-variable value="#[attributes.uriParams.id]" doc:name="Set Variable id" doc:id="6cdd2e02-3abe-4550-952a-a2cac90d789a" variableName="id" />
-		<employeelookupprocess-api:get-employee-by-id doc:name="Get employee by id" doc:id="9f1b9726-724b-4ca9-92d6-bc3339f0ad39" config-ref="Employee_lookup_process_API_Config" id="#[vars.id]"/>
-		<ee:transform doc:name="Transform Message" doc:id="ece1543c-2356-4ff6-9324-a17084606898" >
+		<employeelookupprocess-api:get-employee-by-id doc:name="Retrieve employee" doc:id="9f1b9726-724b-4ca9-92d6-bc3339f0ad39" config-ref="Employee_lookup_process_API_Config" id="#[vars.id]"/>
+		<ee:transform doc:name="Prepare Response" doc:id="ece1543c-2356-4ff6-9324-a17084606898" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
