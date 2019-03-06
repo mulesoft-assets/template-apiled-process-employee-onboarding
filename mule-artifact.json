@@ -1,33 +1,3 @@
 {
-  "configs": [
-    "implementation.xml",
-    "global.xml",
-    "process-api.xml"
-  ],
-  "secureProperties": [],
-  "redeploymentEnabled": true,
-  "name": "template-apiled-process-employee-onboarding",
-  "minMuleVersion": "4.1.1",
-  "requiredProduct": "MULE_EE",
-  "classLoaderModelLoaderDescriptor": {
-    "id": "mule",
-    "attributes": {
-      "exportedPackages": [],
-      "exportedResources": [
-        "api\\.gitignore",
-        "api\\dataTypes\\Employee.raml",
-        "api\\dataTypes\\ErrorResponse.raml",
-        "api\\dataTypes\\SuccessResponse.raml",
-        "api\\examples\\get_employee_example.json",
-        "api\\examples\\post_employee_example.json",
-        "api\\template-apiled-process-employee-onbo.raml",
-        "api\\traits\\trait-collection.raml",
-        "api\\process-api.raml"
-      ]
-    }
-  },
-  "bundleDescriptorLoader": {
-    "id": "mule",
-    "attributes": {}
-  }
+  "minMuleVersion": "4.1.4"
 }
