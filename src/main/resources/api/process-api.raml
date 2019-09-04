@@ -24,6 +24,11 @@ traits:
               "status": "Accepted"
             }
         description: Accepted and sent for processing
+        headers:
+          Location:
+            description: The url where to check the asynchronous process status
+            example: [ http://{hostname}/queue/elements/{element-id} ]
+
     body: 
       application/json:
         type: Employee
@@ -49,7 +54,7 @@ traits:
             application/json:
               type: ErrorResponse
  
-/queue/{id}:
+/queue/elements/{id}:
     displayName: Get queue status for Employees onboarding process with specific ID
     uriParameters:
       id:
@@ -58,7 +63,7 @@ traits:
         description: Represents the employee onboarding process unique id in form of UUID
     get:
       displayName: Get Queue Status
-      description: Get queue status for Employees onboarding process by ID
+      description: Get queue status for Employees onboarding process by temporary ID
       responses:
         200:
           body:
@@ -67,7 +72,12 @@ traits:
                 {
                   "message": "In progress"
                 }
-        303:      
+        303:
+          description: After asynchronous processing is complete to indicate the final location of the new resource
+          headers:
+            Location:
+              description: The url where to fetch the actual entity created asynchronously
+              example: [ http://{hostname}/employees/{employee-id} ]
         404:
           body:
             application/json:

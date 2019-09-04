@@ -33,7 +33,7 @@ This endpoint will start generation of the Employee onboarding process. The gene
 ### GET /employees/{id}
 This endpoint returns Employee ids aggregation identified by unique ID. If the process does not exist or haven't been finished yet, the request ends up with "Resource not found" message.
 
-### GET /queue/{id}
+### GET /queue/elements/{id}
 This endpoint returns the status of the queued Employee onboarding process identified by unique ID. There are three states:
 
 + In progress - status code 200 is returned, process has not finished yet
