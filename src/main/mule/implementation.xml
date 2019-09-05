@@ -23,7 +23,7 @@ uuid()]]></ee:set-variable>
 output application/java
 ---
 {
-	path: "http://" ++ attributes.headers.host ++ "/api/queue/"
+	path: "http://" ++ attributes.headers.host ++ "/api/queue/elements/"
 }]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
