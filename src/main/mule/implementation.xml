@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:employee-workday-system-api="http://www.mulesoft.org/schema/mule/employee-workday-system-api"
-	xmlns:employee-net-suite-system-api="http://www.mulesoft.org/schema/mule/employee-net-suite-system-api" xmlns:user-salesforce-system-api="http://www.mulesoft.org/schema/mule/user-salesforce-system-api" xmlns:employeelookupprocess-api="http://www.mulesoft.org/schema/mule/employeelookupprocess-api" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:employee-lookup-process-api="http://www.mulesoft.org/schema/mule/employee-lookup-process-api"
+	xmlns:employee-system-api="http://www.mulesoft.org/schema/mule/employee-system-api" 
+    xmlns:user-salesforce-system-api="http://www.mulesoft.org/schema/mule/user-salesforce-system-api" xmlns:http="http://www.mulesoft.org/schema/mule/http" 
+    xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" 
+    xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-http://www.mulesoft.org/schema/mule/employeelookupprocess-api http://www.mulesoft.org/schema/mule/employeelookupprocess-api/current/mule-employeelookupprocess-api.xsd
 http://www.mulesoft.org/schema/mule/user-salesforce-system-api http://www.mulesoft.org/schema/mule/user-salesforce-system-api/current/mule-user-salesforce-system-api.xsd
-http://www.mulesoft.org/schema/mule/employee-net-suite-system-api http://www.mulesoft.org/schema/mule/employee-net-suite-system-api/current/mule-employee-net-suite-system-api.xsd
-http://www.mulesoft.org/schema/mule/employee-workday-system-api http://www.mulesoft.org/schema/mule/employee-workday-system-api/current/mule-employee-workday-system-api.xsd">
+http://www.mulesoft.org/schema/mule/employee-system-api http://www.mulesoft.org/schema/mule/employee-system-api/current/mule-employee-system-api.xsd
+http://www.mulesoft.org/schema/mule/employee-lookup-process-api http://www.mulesoft.org/schema/mule/employee-lookup-process-api/current/mule-employee-lookup-process-api.xsd">
 
 	<flow name="postEmployeeProcessFlow" doc:id="38697d6d-5bc9-4d65-8646-8bae278df246" >
 		<ee:transform doc:name="Set path and uniqueID" doc:id="8c862298-3c40-443d-aeb7-179d45f45cd0" >
@@ -57,13 +60,13 @@ output application/json
 }]]></ee:set-payload>
 						</ee:message>
 					</ee:transform>
-					<user-salesforce-system-api:create-user doc:name="Create user in SFDC" doc:id="4258f39b-108c-4ef2-ba0a-9a60c9826a10" config-ref="User_Salesforce_System_API_Config" />
+					<user-salesforce-system-api:create-user doc:name="Create user in SFDC" doc:id="5d1d8568-430f-4cff-af69-5ebef75eef6e" config-ref="User_Salesforce_System_API_Config"/>
 				</route>
 				<route >
-					<employee-net-suite-system-api:create-employee doc:name="Create employee in Nets" doc:id="bd612d04-84e2-4e14-a343-2cfd36c27b60" config-ref="Employee_NetSuite_System_API_Config"/>
+					<employee-system-api:create-employee doc:name="Create employee in Nets" doc:id="ce655e14-3787-4210-bfd6-2d6e90381c71" config-ref="Employee_NetSuite_System_API_Config"/>
 				</route>
 				<route >
-					<employee-workday-system-api:create-employee doc:name="Create employee in Wday" doc:id="96286111-7f6c-4946-94d0-12141fe13078" config-ref="Employee_Workday_System_API_Config"/>
+					<employee-system-api:create-employee doc:name="Create employee in Wday" doc:id="f7ebdf0d-cd29-42ec-9a9a-409fd9a5dfe0" config-ref="Employee_Workday_System_API_Config"/>
 				</route>
 			</scatter-gather>
 			<ee:transform doc:name="Merge results" doc:id="1757e708-c26a-4e7e-9ee6-f00abbdadf01">
@@ -78,7 +81,7 @@ output application/json
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-			<employeelookupprocess-api:create-employee doc:name="Create employee lookup" doc:id="aed64fc2-1e1a-45c7-a486-a43a9aaeda81" config-ref="Employee_lookup_process_API_Config"/>
+			<employee-lookup-process-api:create-employee-mapping doc:name="Create employee lookup" doc:id="48a00601-5d74-4caa-be68-5d89a9cca679" config-ref="Employee_Lookup_Process_API_Config"/>
 			<os:store doc:name="Save data" doc:id="a29d47cd-1e5d-4b7a-be46-d79e445d6c9a" key="#[vars.uniqueID]" objectStore="Object_store">
 				<os:value ><![CDATA[#[payload.id]]]></os:value>
 			</os:store>
@@ -199,7 +202,7 @@ output application/java
 	</flow>
 	<flow name="getEmployeeByIdFlow" doc:id="2faf51a6-8070-4f43-a87f-e576c016f1f2" >
 		<set-variable value="#[attributes.uriParams.id]" doc:name="Set Variable id" doc:id="6cdd2e02-3abe-4550-952a-a2cac90d789a" variableName="id" />
-		<employeelookupprocess-api:get-employee-by-id doc:name="Retrieve employee" doc:id="9f1b9726-724b-4ca9-92d6-bc3339f0ad39" config-ref="Employee_lookup_process_API_Config" id="#[vars.id]"/>
+		<employee-lookup-process-api:get-employee-mapping-by-id doc:name="Retrieve employee" doc:id="46532324-74a2-4b1f-82e7-3388cfe7f297" config-ref="Employee_Lookup_Process_API_Config" id="#[vars.id]"/>
 		<ee:transform doc:name="Prepare Response" doc:id="ece1543c-2356-4ff6-9324-a17084606898" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0

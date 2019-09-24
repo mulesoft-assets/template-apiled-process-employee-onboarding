@@ -1,0 +1,18 @@
+firstName: "John"
+lastName: "Doe"
+addressLine: "3939 The Embarcadero"
+city: "San Francisco"
+postalCode: "94111"
+country: "USA"
+region: "USA-CA"
+birthDate: "1972-05-25-07:00"
+phone: "444-8262"
+email: "john.doe@mulesoft.com"
+positionTitle: "Chief Human Resources Officer"
+weeklyHours: 40
+basePay: 4000
+currency: "USD"
+localeSidKey: "en_IE_EURO"
+languageLocaleKey: "en_US"
+timeZoneSidKey: "America/New_York"
+emailEncodingKey: "ISO-8859-1"

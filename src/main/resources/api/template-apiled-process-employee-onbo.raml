@@ -1,74 +1,82 @@
 #%RAML 1.0
-title: Employee onborading process API
+title: Employee Onboarding Process API
 version: v2.0
+baseUri: http://localhost:8081/api
 
 types:
-  Employee: !include dataTypes/Employee.raml
-  ErrorResponse: !include dataTypes/ErrorResponse.raml
-  SuccessResponse: !include dataTypes/SuccessResponse.raml
-
-traits:
-  employeeSearch: !include traits/trait-collection.raml
+  employee: !include dataTypes/Employee.raml
+  employeeResponse: !include dataTypes/EmployeeResponse.raml
+  errorResponse: !include dataTypes/ErrorResponse.raml
+  successResponse: !include dataTypes/SuccessResponse.raml
 
 /employees:
-  displayName: Start generation of employees 
   post:
-    displayName: Create Employee
+    displayName: Create employee
     description: |
       Creates the employee in all the system APIs
-    responses:
-      202:
-        body:
-          application/json:
-            example: {
-              "status": "Accepted"
-            }
-        description: Accepted and sent for processing
     body: 
       application/json:
-        type: Employee
-        example: !include examples/post_employee_example.json
-      
+        type: employee
+        example: !include examples/post_employee_example.yaml
+    responses:
+      202:
+        description: Accepted and sent for processing
+        body:
+          application/json:
+            type: successResponse
+            example: {
+              "status": "Accepted"
+            }   
   /{id}:
-    displayName: Get Employee process status with specific ID
     uriParameters:
       id:
         type: string
         example: 20a5ea46-a4ee-4542-93f4-9040a4ec078b
         description: Represents the employee process unique id in form of UUID
     get:
-      displayName: Get Employee by ID
+      displayName: Get employee process status by id
       description: Get Employee process status by ID
       responses:
         200:
           body:
             application/json:
-              example: !include examples/get_employee_example.json
+              type: employeeResponse
+              example: !include examples/get_employee_example.yaml
         404:
           body:
             application/json:
-              type: ErrorResponse
+              type: errorResponse
+              example: |
+                {
+                  "message": "Resource not found"
+                }
+
+
  
 /queue/{id}:
-    displayName: Get queue status for Employees onboarding process with specific ID
     uriParameters:
       id:
         type: string
         example: 20a5ea46-a4ee-4542-93f4-9040a4ec078b
         description: Represents the employee onboarding process unique id in form of UUID
     get:
-      displayName: Get Queue Status
+      displayName: Get queue status by id
       description: Get queue status for Employees onboarding process by ID
       responses:
         200:
           body:
             application/json:
+              type: errorResponse
               example: |
                 {
                   "message": "In progress"
                 }
-        303:      
+        303:     
         404:
           body:
             application/json:
-              type: ErrorResponse
+              type: errorResponse
+              example: |
+                {
+                  "message": "Resource not found"
+                }

@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    
+
     <parent>
         <groupId>org.mule.templates</groupId>
         <artifactId>templates-tooling-parent-pom</artifactId>
-        <version>2.1.16</version>
+        <version>2.1.21</version>
     </parent>
-    
+
     <modelVersion>4.0.0</modelVersion>
     <artifactId>template-apiled-process-employee-onboarding</artifactId>
     <version>2.1.0-SNAPSHOT</version>
     <packaging>mule-application</packaging>
     <name>template-apiled-process-employee-onboarding</name>
-    
+
     <build>
         <plugins>
             <plugin>
@@ -24,7 +24,7 @@
                     <classifier>mule-application-template</classifier>
                 </configuration>
             </plugin>
-        <plugin>
+            <plugin>
                 <groupId>com.mulesoft.munit.tools</groupId>
                 <artifactId>munit-maven-plugin</artifactId>
                 <version>${munit.version}</version>
@@ -52,7 +52,7 @@
             </plugin>
         </plugins>
     </build>
-    
+
     <dependencies>
         <dependency>
             <groupId>org.mule.modules</groupId>
@@ -70,30 +70,24 @@
             <classifier>mule-plugin</classifier>
         </dependency>
         <dependency>
-            <groupId>47f07e0a-f578-47d4-9591-d9e7afffb0fc</groupId>
-            <artifactId>template-apiled-process-employee-lookup</artifactId>
-            <version>2.0.1</version>
-            <classifier>mule-plugin</classifier>
-        </dependency>
-        <dependency>
-            <groupId>47f07e0a-f578-47d4-9591-d9e7afffb0fc</groupId>
-            <artifactId>template-apiled-system-user-sfdc</artifactId>
+            <groupId>org.mule.templates</groupId>
+            <artifactId>mule-plugin-apiled-template-employee-lookup-process-api</artifactId>
             <version>2.0.0</version>
             <classifier>mule-plugin</classifier>
         </dependency>
         <dependency>
-            <groupId>47f07e0a-f578-47d4-9591-d9e7afffb0fc</groupId>
-            <artifactId>template-apiled-system-employee-nets</artifactId>
+            <groupId>org.mule.templates</groupId>
+            <artifactId>mule-plugin-apiled-template-user-salesforce-system-api</artifactId>
             <version>2.0.0</version>
             <classifier>mule-plugin</classifier>
         </dependency>
         <dependency>
-            <groupId>47f07e0a-f578-47d4-9591-d9e7afffb0fc</groupId>
-            <artifactId>template-apiled-system-employee-wday</artifactId>
+            <groupId>org.mule.templates</groupId>
+            <artifactId>mule-plugin-apiled-template-employee-system-api</artifactId>
             <version>2.0.0</version>
             <classifier>mule-plugin</classifier>
         </dependency>
-    	<dependency>
+        <dependency>
             <groupId>com.mulesoft.munit</groupId>
             <artifactId>munit-runner</artifactId>
             <classifier>mule-plugin</classifier>
@@ -105,12 +99,13 @@
             <classifier>mule-plugin</classifier>
             <scope>test</scope>
         </dependency>
-    	<dependency>
+        <dependency>
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-scripting-module</artifactId>
             <classifier>mule-plugin</classifier>
         </dependency>
     </dependencies>
+
     <repositories>
         <repository>
             <id>anypoint-exchange</id>
@@ -125,5 +120,5 @@
             <layout>default</layout>
         </repository>
     </repositories>
-    
+
 </project>
