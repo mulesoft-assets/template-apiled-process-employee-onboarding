@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:employee-lookup-process-api="http://www.mulesoft.org/schema/mule/employee-lookup-process-api"
-	xmlns:employee-system-api="http://www.mulesoft.org/schema/mule/employee-system-api" 
-    xmlns:user-salesforce-system-api="http://www.mulesoft.org/schema/mule/user-salesforce-system-api" xmlns:http="http://www.mulesoft.org/schema/mule/http" 
-    xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" 
-    xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" 
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:user-system-api="http://www.mulesoft.org/schema/mule/user-system-api"
+	xmlns:employee-lookup-process-api="http://www.mulesoft.org/schema/mule/employee-lookup-process-api" 
+    xmlns:employee-system-api="http://www.mulesoft.org/schema/mule/employee-system-api"
+    xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:os="http://www.mulesoft.org/schema/mule/os" 
+    xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" 
+    xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-http://www.mulesoft.org/schema/mule/user-salesforce-system-api http://www.mulesoft.org/schema/mule/user-salesforce-system-api/current/mule-user-salesforce-system-api.xsd
 http://www.mulesoft.org/schema/mule/employee-system-api http://www.mulesoft.org/schema/mule/employee-system-api/current/mule-employee-system-api.xsd
-http://www.mulesoft.org/schema/mule/employee-lookup-process-api http://www.mulesoft.org/schema/mule/employee-lookup-process-api/current/mule-employee-lookup-process-api.xsd">
+http://www.mulesoft.org/schema/mule/employee-lookup-process-api http://www.mulesoft.org/schema/mule/employee-lookup-process-api/current/mule-employee-lookup-process-api.xsd
+http://www.mulesoft.org/schema/mule/user-system-api http://www.mulesoft.org/schema/mule/user-system-api/current/mule-user-system-api.xsd">
 
 	<flow name="postEmployeeProcessFlow" doc:id="38697d6d-5bc9-4d65-8646-8bae278df246" >
 		<ee:transform doc:name="Set path and uniqueID" doc:id="8c862298-3c40-443d-aeb7-179d45f45cd0" >
@@ -33,12 +33,16 @@ output application/java
 		<os:store doc:name="Store uniqueID" doc:id="f7f0d3f4-ad96-4429-9600-4c28afd14f3f" key="#[vars.uniqueID]" objectStore="Object_store">
 			<os:value ><![CDATA[#['']]]></os:value>
 		</os:store>
-		<async doc:name="Async" doc:id="2d133d9e-b752-4269-b145-ad85aaf02855" >
-			<scatter-gather doc:name="Scatter-Gather" doc:id="cb771e58-ae1d-4593-b709-6d2ec1a4cbec" >
-				<route >
-					<ee:transform doc:name="Prepare request" doc:id="c2a7a760-81d4-4065-ae2a-64dc05c50edc" >
-						<ee:message >
-							<ee:set-payload ><![CDATA[%dw 2.0
+		<ee:transform doc:name="Prepare request" doc:id="c2a7a760-81d4-4065-ae2a-64dc05c50edc">
+						<ee:message>
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+						</ee:message>
+						<ee:variables>
+				<ee:set-variable variableName="sfdcUserData" ><![CDATA[%dw 2.0
 output application/json
 ---
 {
@@ -46,27 +50,35 @@ output application/json
 	"lastName" : payload.lastName,
 	"username" : payload.email,
 	"alias": payload.lastName,
-	"street" : payload.addressLine,
-	"city" : payload.city,
-	"postalCode" : payload.postalCode,
-	"country" : payload.country,
-	"phone" : payload.phone,
 	"email": payload.email,
 	"localeSidKey" : payload.localeSidKey,
 	"languageLocaleKey" : payload.languageLocaleKey,
 	"emailEncodingKey" : payload.emailEncodingKey,
 	"timeZoneSidKey" : payload.timeZoneSidKey,
 	"profileId" : p('system.api.user.sfdc.profileId')
-}]]></ee:set-payload>
-						</ee:message>
+}]]></ee:set-variable>
+				<ee:set-variable variableName="userData" ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-variable>
+						</ee:variables>
 					</ee:transform>
-					<user-salesforce-system-api:create-user doc:name="Create user in SFDC" doc:id="5d1d8568-430f-4cff-af69-5ebef75eef6e" config-ref="User_Salesforce_System_API_Config"/>
+		<async doc:name="Async" doc:id="2d133d9e-b752-4269-b145-ad85aaf02855" >
+			<scatter-gather doc:name="Scatter-Gather" doc:id="cb771e58-ae1d-4593-b709-6d2ec1a4cbec" >
+				<route >
+					<user-system-api:create-user doc:name="Create user in Salesforce" doc:id="9e794233-3651-4518-9ce9-b6bc514b8e5f" config-ref="User_System_API_Config">
+						<user-system-api:create-user-request-data ><![CDATA[#[vars.sfdcUserData]]]></user-system-api:create-user-request-data>
+					</user-system-api:create-user>
 				</route>
 				<route >
-					<employee-system-api:create-employee doc:name="Create employee in Nets" doc:id="ce655e14-3787-4210-bfd6-2d6e90381c71" config-ref="Employee_NetSuite_System_API_Config"/>
+					<employee-system-api:create-employee doc:name="Create employee in Nets" doc:id="ce655e14-3787-4210-bfd6-2d6e90381c71" config-ref="Employee_NetSuite_System_API_Config">
+						<employee-system-api:create-employee-request-data ><![CDATA[#[vars.userData]]]></employee-system-api:create-employee-request-data>
+					</employee-system-api:create-employee>
 				</route>
 				<route >
-					<employee-system-api:create-employee doc:name="Create employee in Wday" doc:id="f7ebdf0d-cd29-42ec-9a9a-409fd9a5dfe0" config-ref="Employee_Workday_System_API_Config"/>
+					<employee-system-api:create-employee doc:name="Create employee in Wday" doc:id="f7ebdf0d-cd29-42ec-9a9a-409fd9a5dfe0" config-ref="Employee_Workday_System_API_Config">
+						<employee-system-api:create-employee-request-data ><![CDATA[#[vars.userData]]]></employee-system-api:create-employee-request-data>
+					</employee-system-api:create-employee>
 				</route>
 			</scatter-gather>
 			<ee:transform doc:name="Merge results" doc:id="1757e708-c26a-4e7e-9ee6-f00abbdadf01">

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:employee-system-api="http://www.mulesoft.org/schema/mule/employee-system-api" xmlns:employee-lookup-process-api="http://www.mulesoft.org/schema/mule/employee-lookup-process-api"
-    xmlns:user-salesforce-system-api="http://www.mulesoft.org/schema/mule/user-salesforce-system-api" xmlns:http="http://www.mulesoft.org/schema/mule/http"
-    xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:os="http://www.mulesoft.org/schema/mule/os"
-    xsi:schemaLocation="
+<mule xmlns:user-system-api="http://www.mulesoft.org/schema/mule/user-system-api" xmlns:employee-system-api="http://www.mulesoft.org/schema/mule/employee-system-api"
+    xmlns:employee-lookup-process-api="http://www.mulesoft.org/schema/mule/employee-lookup-process-api"
+    xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:os="http://www.mulesoft.org/schema/mule/os" xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
-http://www.mulesoft.org/schema/mule/user-salesforce-system-api http://www.mulesoft.org/schema/mule/user-salesforce-system-api/current/mule-user-salesforce-system-api.xsd
 http://www.mulesoft.org/schema/mule/employee-lookup-process-api http://www.mulesoft.org/schema/mule/employee-lookup-process-api/current/mule-employee-lookup-process-api.xsd
-http://www.mulesoft.org/schema/mule/employee-system-api http://www.mulesoft.org/schema/mule/employee-system-api/current/mule-employee-system-api.xsd">
+http://www.mulesoft.org/schema/mule/employee-system-api http://www.mulesoft.org/schema/mule/employee-system-api/current/mule-employee-system-api.xsd
+http://www.mulesoft.org/schema/mule/user-system-api http://www.mulesoft.org/schema/mule/user-system-api/current/mule-user-system-api.xsd">
 
     <global-property name="mule.env" value="dev" doc:name="Global Property" />
     <configuration-properties doc:name="Configuration properties" doc:id="7305b8b1-e587-4752-acb3-1297d0d1587d" file="common.properties" />
@@ -23,11 +23,11 @@ http://www.mulesoft.org/schema/mule/employee-system-api http://www.mulesoft.org/
         <employee-lookup-process-api:connection />
     </employee-lookup-process-api:config>
 
-    <user-salesforce-system-api:config name="User_Salesforce_System_API_Config" doc:name="User Salesforce System API Config"
-        doc:id="b0727908-2cf9-414a-a508-fcbc09e4738f" property_host="${system.api.user.sfdc.domain}" property_port="${system.api.user.sfdc.http.port}"
+    <user-system-api:config name="User_System_API_Config" doc:name="User System API Config" doc:id="368f618d-270d-4313-b3e7-c9d46fc3ae31" 
+        property_host="${system.api.user.sfdc.domain}" property_port="${system.api.user.sfdc.http.port}"
         property_basePath="${system.api.user.sfdc.basePath}" property_protocol="${system.api.user.sfdc.protocol}">
-        <user-salesforce-system-api:connection />
-    </user-salesforce-system-api:config>
+        <user-system-api:connection />
+    </user-system-api:config>
 
     <employee-system-api:config name="Employee_NetSuite_System_API_Config" doc:name="Employee NetSuite System API Config"
         doc:id="7588cc93-8016-400d-a3c1-75bca84ce8d9" property_host="${system.api.employee.nets.domain}" property_port="${system.api.employee.nets.http.port}"
