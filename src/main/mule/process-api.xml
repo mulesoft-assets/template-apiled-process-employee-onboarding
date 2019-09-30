@@ -126,7 +126,7 @@ output application/json
     <flow name="get:\employees\(id):api-config">
         <flow-ref doc:name="getEmployeeByIdFlow" doc:id="10dc9205-a6f2-431a-9298-663d3d03c48c" name="getEmployeeByIdFlow" />
     </flow>
-    <flow name="get:\queue\(id):api-config">
+    <flow name="get:\queue\elements\(id):api-config">
         <flow-ref doc:name="getQueueFlow" doc:id="f4028b7f-0f32-4b6a-8ca4-cc8edab1bfa4" name="getQueueFlow" />
     </flow>
     <flow name="post:\employees:application\json:api-config">
