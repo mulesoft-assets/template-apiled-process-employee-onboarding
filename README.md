@@ -20,18 +20,18 @@ Note that using this template is subject to the conditions of this [License Agre
 Please review the terms of the license before downloading and using this template. In short, you are allowed to use the template for free with Mule ESB Enterprise Edition, CloudHub, or as a trial in Anypoint Studio.
 
 # Use Case <a name="usecase"/>
-This Anypoint template serves as a foundation for API Led Connectivity approach of running an enterprise.
+This Anypoint template serves as a foundation for API Led Connectivity approach of running an enterprise environment.
 
-This template is a REST API implemented using APIkit and RAML definition. The API uses JSON as an exchange format. Included are example requests and responses.
-This Template incorporate the Employee System APIs, for storing Employees in multiple target systems.
+This template is a REST API implemented using APIkit and RAML definition. The API uses JSON as exchange format. Included are example requests and responses.
+This Template incorporates the Employee System APIs, for storing Employees in multiple target systems.
 
 Below are the endpoints that are implemented.
 
 ### POST /employees
-This endpoint will start generation of the Employee onboarding process. The generation is done asynchronously using queue for requests. The process aggregates the ids of each system API response using a lookup process API. The lookup process API RAML you can find in main/resources/api/ directory. The lookup process API implementation of that RAML is client specific and should use persistent storage to preserve a mapping data. Responses are get from three source instances(Workday, Netsuite and Salesforce) using API Led Connectivity System APIs.
+This endpoint will start generation of the Employee onboarding process. The generation is done asynchronously using queue for requests. The process aggregates the ids of each system API response using a lookup process API. The lookup process API RAML you can find in main/resources/api/ directory. The lookup process API implementation of that RAML is client specific and should use persistent storage to preserve a mapping data. Responses are got from three source instances(Workday, Netsuite and Salesforce) using API Led Connectivity System APIs.
 
 ### GET /employees/{id}
-This endpoint returns Employee ids aggregation identified by unique ID. If the process does not exist or haven't been finished yet, the request ends up with "Resource not found" message.
+This endpoint returns Employee ids aggregation identified by unique ID. If the process does not exist or has not been finished yet, the request ends up with "Resource not found" message.
 
 ### GET /queue/{id}
 This endpoint returns the status of the queued Employee onboarding process identified by unique ID. There are three states:
@@ -49,7 +49,7 @@ Simple steps to get API Led Connectivity Process API for Employees running.
 
 
 ## Running on premise <a name="runonopremise"/>
-In this section we detail the way you should run your template on your computer.
+In this section we detail the way you should run this template on your computer.
 
 
 ### Where to Download Mule Studio and Mule ESB
@@ -69,12 +69,12 @@ You can find a detailed description on how to do so in this [Documentation Page]
 
 
 ### Running on Studio <a name="runonstudio"/>
-Once you have imported you template into Anypoint Studio you need to follow these steps to run it:
+Once you have imported the template into Anypoint Studio you need to follow these steps to run it:
 
 + Locate the properties file `mule.dev.properties`, in src/main/resources
 + Complete all the properties required as per the examples in the section [Properties to be configured](#propertiestobeconfigured)
-+ Once that is done, right click on you template project folder 
-+ Hover you mouse over `"Run as"`
++ Once that is done, right click on your template project folder 
++ Hover your mouse over `"Run as"`
 + Click on  `"Mule Application"`
 
 
@@ -126,11 +126,11 @@ In order to use this Mule template you need to configure properties (Credentials
 
 
 # Customize It!<a name="customizeit"/>
-This brief guide intends to give a high level idea of how this template is built and how you can change it according to your needs.
+This brief guide intends to give an overview idea of how this template is built and how you can change it according to your needs.
 As mule applications are based on XML files, this page will be organized by describing all the XML that conform the template.
 Of course more files will be found such as Test Classes and [Mule Application Files](http://www.mulesoft.org/documentation/display/current/Application+Format), but to keep it simple we will focus on the XMLs.
 
-Here is a list of the main XML files you'll find in this application:
+Here is a list of the main XML files you can find in this application:
 
 * [global.xml](#global)
 
