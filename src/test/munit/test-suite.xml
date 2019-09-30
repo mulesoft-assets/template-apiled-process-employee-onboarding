@@ -30,7 +30,7 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 			<munit:enable-flow-source value="api-main" />
 			<munit:enable-flow-source value="post:\employees:application\json:api-config" />
 			<munit:enable-flow-source value="get:\employees\(id):api-config" />
-			<munit:enable-flow-source value="get:\queue\(id):api-config" />
+			<munit:enable-flow-source value="get:\queue\elements\(id):api-config" />
 		</munit:enable-flow-sources>
 		<munit:execution >
 			<ee:transform doc:name="Prepare test data" doc:id="ac60584e-4121-4dd4-af71-810cb538f73b">
@@ -81,7 +81,7 @@ output application/java
 				<scripting:code>sleep(30000)</scripting:code>
 			</scripting:execute>
 			<os:retrieve-all-keys doc:name="Retrieve employee keys" doc:id="aa03cc81-e8b2-412c-b595-2412119f7815" objectStore="Object_store" target="dataKeys" />
-			<http:request method="GET" doc:name="Get Queue Request" doc:id="c3ea0792-84d2-4c0b-8b9d-2ec4dcfd93e1" config-ref="HTTP_Request_configuration" path="/queue/{id}">
+			<http:request method="GET" doc:name="Get Queue Request" doc:id="c3ea0792-84d2-4c0b-8b9d-2ec4dcfd93e1" config-ref="HTTP_Request_configuration" path="/queue/elements/{id}">
 			<http:uri-params><![CDATA[#[output application/java
 ---
 {
@@ -113,10 +113,10 @@ output application/java
 	<munit:test name="test-suiteGetQueue404Test" description="MUnit Test" doc:id="1b97877b-5ac3-42ca-93a1-f9df1e81bba3" >
 		<munit:enable-flow-sources >
 			<munit:enable-flow-source value="api-main" />
-			<munit:enable-flow-source value="get:\queue\(id):api-config" />
+			<munit:enable-flow-source value="get:\queue\elements\(id):api-config" />
 		</munit:enable-flow-sources>
 		<munit:execution >
-			<http:request method="GET" doc:name="Get Queue Request" doc:id="c3206543-cac4-4b63-a9ee-482ded0f25a9" config-ref="HTTP_Request_configuration" path="/queue/{id}">
+			<http:request method="GET" doc:name="Get Queue Request" doc:id="c3206543-cac4-4b63-a9ee-482ded0f25a9" config-ref="HTTP_Request_configuration" path="/queue/elements/{id}">
 				<http:uri-params><![CDATA[#[output application/java
 ---
 {
